@@ -15,7 +15,7 @@
     <polygon points="758,452 818,512 758,572 698,512" fill="#F04E37"/>
   </g>
 
-  <text x="456" y="128" font-family="Consolas" font-weight="bold" font-size="16" fill="#0C694D" letter-spacing="2.5">SWISS PROBABILITY ATELIER · CHAIN 4663</text>
+  <text x="456" y="128" font-family="Consolas" font-weight="bold" font-size="16" fill="#0C694D" letter-spacing="2.5">ACTUARIAL PROBABILITY ATELIER · LIVE CALIBRATION</text>
   <text x="454" y="218" font-family="Georgia" font-weight="bold" font-size="84" fill="#141513">KALIBR</text>
   <text x="456" y="268" font-family="Georgia" font-style="italic" font-size="27" fill="#383934">Uncover mispriced world event probabilities in &lt;1.2s.</text>
 
