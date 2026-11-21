@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
+  <rect width="1024" height="1024" fill="#111412"/>
+
+  <!-- Slanted Architectural Vernier Stem (Warm Ivory) -->
+  <polygon points="274,228 408,228 324,796 190,796" fill="#FAF7F0"/>
+  <!-- 3 Crisp Vernier Scale Cutouts on Stem -->
+  <polygon points="256,350 314,350 310,374 252,374" fill="#111412"/>
+  <polygon points="242,446 318,446 314,470 238,470" fill="#111412"/>
+  <polygon points="228,542 304,542 300,566 224,566" fill="#111412"/>
+
+  <!-- Folded Inner Connector Facet (Muted Sage-Slate) -->
+  <polygon points="434,492 558,492 496,574 372,574" fill="#7D8A82"/>
+
+  <!-- Upper Ascending Calibrated Edge Ribbon (Luminous Swiss Emerald) -->
+  <polygon points="434,492 710,228 854,228 566,504" fill="#16B57D"/>
+
+  <!-- Lower Counter-Balance Ribbon (Warm Ivory) -->
+  <polygon points="462,534 590,510 798,796 654,796" fill="#FAF7F0"/>
+
+  <!-- Precision Swiss Vermilion Equilibrium Diamond at Focal Point -->
+  <polygon points="758,452 818,512 758,572 698,512" fill="#F04E37"/>
+</svg>

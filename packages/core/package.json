@@ -1,0 +1,15 @@
+{
+  "name": "@kalibr/core",
+  "version": "0.1.0",
+  "description": "Zero-dependency probability calibration engine, Polymarket microstructure & rule-trap scanner, Keccak-256 Merkle proofs, and Robinhood Chain (4663) RPC reader.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./keccak": "./src/keccak.js",
+    "./merkle": "./src/merkle.js",
+    "./polymarket": "./src/polymarket.js",
+    "./rpc": "./src/rpc.js"
+  },
+  "license": "MIT"
+}

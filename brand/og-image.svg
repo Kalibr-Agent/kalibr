@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#EAE4D8"/>
+  <rect x="28" y="28" width="1144" height="574" rx="16" fill="#FAF8F3" stroke="#141513" stroke-width="3"/>
+
+  <!-- Left Flat Vector Mark -->
+  <g transform="translate(72 145) scale(0.332)">
+    <rect width="1024" height="1024" rx="208" fill="#111412"/>
+    <polygon points="274,228 408,228 324,796 190,796" fill="#FAF7F0"/>
+    <polygon points="256,350 314,350 310,374 252,374" fill="#111412"/>
+    <polygon points="242,446 318,446 314,470 238,470" fill="#111412"/>
+    <polygon points="228,542 304,542 300,566 224,566" fill="#111412"/>
+    <polygon points="434,492 558,492 496,574 372,574" fill="#7D8A82"/>
+    <polygon points="434,492 710,228 854,228 566,504" fill="#16B57D"/>
+    <polygon points="462,534 590,510 798,796 654,796" fill="#FAF7F0"/>
+    <polygon points="758,452 818,512 758,572 698,512" fill="#F04E37"/>
+  </g>
+
+  <text x="456" y="128" font-family="Consolas" font-weight="bold" font-size="16" fill="#0C694D" letter-spacing="2.5">SWISS PROBABILITY ATELIER · CHAIN 4663</text>
+  <text x="454" y="218" font-family="Georgia" font-weight="bold" font-size="84" fill="#141513">KALIBR</text>
+  <text x="456" y="268" font-family="Georgia" font-style="italic" font-size="27" fill="#383934">Uncover mispriced world event probabilities in &lt;1.2s.</text>
+
+  <rect x="456" y="308" width="672" height="184" rx="10" fill="#FFFFFF" stroke="#141513" stroke-width="2.5"/>
+  <text x="486" y="350" font-family="Georgia" font-weight="bold" font-size="22" fill="#141513">Crowd YES 54.0%  →  Fair Value 73.5%</text>
+  <rect x="950" y="326" width="150" height="32" rx="5" fill="#E7F4EF" stroke="#9BD3C0" stroke-width="1.5"/>
+  <text x="1025" y="347" text-anchor="middle" font-family="Consolas" font-weight="bold" font-size="14" fill="#0C694D">EDGE +19.5%</text>
+
+  <line x1="486" y1="406" x2="1098" y2="406" stroke="#B8B09F" stroke-width="5"/>
+  <rect x="816" y="395" width="120" height="22" rx="4" fill="#16B57D"/>
+  <circle cx="816" cy="406" r="13" fill="#FFFFFF" stroke="#141513" stroke-width="5"/>
+  <g transform="translate(936 406) rotate(45)">
+    <rect x="-11" y="-11" width="22" height="22" rx="2" fill="#0C694D"/>
+  </g>
+  <text x="486" y="462" font-family="Consolas" font-size="14" fill="#66655D">1/4 Kelly Sizer · Rule-Trap Audit · npx kalibr · Merkle Seals</text>
+  <text x="456" y="548" font-family="Consolas" font-weight="bold" font-size="16" fill="#141513">kalibragent.com  ·  0-WALLET INSTANT ACCESS</text>
+</svg>

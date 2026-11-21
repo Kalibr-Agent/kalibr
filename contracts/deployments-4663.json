@@ -1,0 +1,17 @@
+{
+  "chainId": 4663,
+  "network": "Robinhood Chain",
+  "rpcUrl": "https://rpc.mainnet.chain.robinhood.com",
+  "explorer": "https://robinhoodchain.blockscout.com",
+  "contracts": {
+    "ForecastSealRegistry": {
+      "address": null,
+      "compiler": "0.8.24",
+      "sourcify": "exact_match"
+    }
+  },
+  "token": {
+    "symbol": null,
+    "address": null
+  }
+}

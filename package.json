@@ -1,0 +1,37 @@
+{
+  "name": "kalibr",
+  "version": "0.1.0",
+  "description": "Autonomous AI probability calibration agents, live Polymarket mispricing & fine-print rule-trap scanner, Quarter-Kelly sizer, CLI/MCP server, and pre-resolution Keccak-256 Merkle forecast seals.",
+  "type": "module",
+  "bin": {
+    "kalibr": "./packages/cli/bin/kalibr.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/core",
+    "packages/cli",
+    "apps/worker"
+  ],
+  "scripts": {
+    "test": "node --test \"packages/core/test/*.test.js\" \"packages/cli/test/*.test.js\" \"contracts/test/*.test.js\" \"apps/worker/test/*.test.js\"",
+    "test:core": "node --test \"packages/core/test/*.test.js\"",
+    "test:cli": "node --test \"packages/cli/test/*.test.js\"",
+    "test:contracts": "node --test \"contracts/test/*.test.js\"",
+    "test:worker": "node --test \"apps/worker/test/*.test.js\"",
+    "sync:site": "node scripts/sync-site-core.mjs",
+    "claimcheck": "node tools/claimcheck.mjs",
+    "dev": "node apps/worker/dev-server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kalibr-Agent/kalibr.git"
+  },
+  "homepage": "https://kalibragent.com",
+  "author": {
+    "name": "KALIBR",
+    "url": "https://kalibragent.com"
+  },
+  "license": "MIT"
+}

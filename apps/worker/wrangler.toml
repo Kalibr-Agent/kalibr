@@ -1,0 +1,39 @@
+name = "kalibr"
+main = "src/index.js"
+compatibility_date = "2026-11-21"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[assets]
+directory = "../site"
+binding = "ASSETS"
+run_worker_first = ["/v1/*", "/mcp", "/llms.txt", "/SKILL.md"]
+
+[ai]
+binding = "AI"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kalibr-db"
+database_id = "02cbd40e-3e9e-43b9-94b3-ebb9b581adc8"
+
+[vars]
+CHAIN_ID = "4663"
+RH_RPC_URL = "https://rpc.mainnet.chain.robinhood.com"
+MODEL = "gpt-4o-mini"
+HOLD_FORECASTER = "1000000"
+HOLD_SYNDICATE = "5000000"
+BURN_PRIORITY = "100000"
+TOKEN_DECIMALS = "18"
+AI_FREE_PER_DAY = "15"
+AI_FORECASTER_PER_DAY = "60"
+AI_SYNDICATE_PER_DAY = "250"
+MCP_FREE_PER_DAY = "300"
+MCP_FORECASTER_PER_DAY = "5000"
+MCP_SYNDICATE_PER_DAY = "50000"
+SEAL_REGISTRY_ADDRESS = ""
+TOKEN_ADDRESS = ""
+SITE_URL = "https://kalibragent.com"

@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KALIBR — Autonomous AI Probability Calibration &amp; Polymarket Edge Atelier</title>
+  <meta name="description" content="Uncover mispriced world event probabilities on Polymarket in under 1.2s. 3-agent LLM superforecasting, fine-print resolution rule-trap audits, Quarter-Kelly sizing, MCP server, and pre-resolution Keccak-256 Merkle seals on Robinhood Chain (4663)." />
+  <meta property="og:title" content="KALIBR — Crowd Odds vs. Calibrated Reality" />
+  <meta property="og:description" content="Autonomous AI probability calibration agents, live Polymarket edge scanner, and pre-resolution Merkle forecast seals on Robinhood Chain (4663)." />
+  <meta property="og:image" content="https://kalibragent.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kalibragent.com/og-image.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <div class="atelier-frame">
+    <!-- LEFT SWISS INSTRUMENT SPINE (NO GENERIC TOPBAR) -->
+    <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
+      <div class="spine-brand">
+        <a href="#board" class="brand-lockup" data-view-link="board">
+          <img src="/logo.png" alt="KALIBR Vernier Emblem" class="brand-mark" width="42" height="42" />
+          <div class="brand-copy">
+            <span class="brand-word">KALIBR</span>
+            <span class="brand-sub">ACTUARIAL AI · CHAIN 4663</span>
+          </div>
+        </a>
+        <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
+      </div>
+
+      <nav class="folio-nav" aria-label="Primary Folios">
+        <button type="button" class="folio-btn is-active" data-view-link="board">
+          <span class="folio-idx">01</span>
+          <span class="folio-meta">
+            <strong>Mispricing Board</strong>
+            <small>Live Polymarket Edge</small>
+          </span>
+        </button>
+        <button type="button" class="folio-btn" data-view-link="bench">
+          <span class="folio-idx">02</span>
+          <span class="folio-meta">
+            <strong>Calibration Bench</strong>
+            <small>3-Agent Dossier &amp; Kelly</small>
+          </span>
+        </button>
+        <button type="button" class="folio-btn" data-view-link="seals">
+          <span class="folio-idx">03</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Keccak-256 Proof &amp; Brier</small>
+          </span>
+        </button>
+        <button type="button" class="folio-btn" data-view-link="mcp">
+          <span class="folio-idx">04</span>
+          <span class="folio-meta">
+            <strong>Agent CLI &amp; MCP</strong>
+            <small>npx kalibr · HTTP MCP</small>
+          </span>
+        </button>
+      </nav>
+
+      <!-- BUILT-IN INSTRUMENT GAUGE -->
+      <div class="spine-telemetry">
+        <div class="telemetry-header">
+          <span class="pulse-dot" id="chainPulseDot"></span>
+          <span id="chainPulseText">ROBINHOOD 4663 · LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tel-cell">
+            <span class="tel-val" id="statMispriced">—</span>
+            <span class="tel-lbl">LIVE EDGES</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statSealedForecasts">—</span>
+            <span class="tel-lbl">SEALED ODDS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statEpochs">—</span>
+            <span class="tel-lbl">EPOCHS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statHeadBlock">—</span>
+            <span class="tel-lbl">HEAD BLOCK</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 0-WALLET READ-ONLY ACCESS PLATE -->
+      <div class="spine-pass">
+        <div class="pass-top">
+          <span class="pass-kicker">0-WALLET ACCESS</span>
+          <span class="pass-badge" id="callerTierBadge">VISITOR</span>
+        </div>
+        <p class="pass-note">Zero signatures or approvals. Paste any public 0x address to check $KALIBR tier.</p>
+        <form id="walletCheckForm" class="pass-form">
+          <input
+            type="text"
+            id="walletInput"
+            placeholder="0x… Robinhood Chain address"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit">Verify</button>
+        </form>
+        <div class="pass-status" id="walletStatusLine">Unlimited &lt;1.2s scans · 15 AI panels/day</div>
+      </div>
+
+      <!-- CONTRACT & SOCIAL FOOTPLATE -->
+      <div class="spine-footer">
+        <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
+          <span class="ca-plate-lbl">TOKEN CONTRACT (4663)</span>
+          <code id="caDisplay">CA: ANNOUNCING ON X</code>
+        </button>
+        <div class="spine-links">
+          <a href="https://x.com/kalibragent" target="_blank" rel="noopener" id="xSocialLink">X / TWITTER ↗</a>
+          <a href="https://github.com/Kalibr-Agent/kalibr" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a href="/SKILL.md" target="_blank" rel="noopener">SKILL.MD ↗</a>
+          <a href="/llms.txt" target="_blank" rel="noopener">LLMS.TXT ↗</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN SWISS COTTON PAPER WORKSPACE -->
+    <main class="atelier-main">
+      <!-- STICKY PRECISION CALIBRATION OMNIBAR -->
+      <header class="instrument-bar">
+        <form id="omnibarForm" class="omnibar-form">
+          <span class="omnibar-glyph" aria-hidden="true">⌖</span>
+          <input
+            type="text"
+            id="omnibarInput"
+            placeholder="Paste any polymarket.com/event/… URL or ask any world event (e.g. Fed December, OpenAI, Bitcoin, Ceasefire)"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span class="omnibar-latency" id="lastScanLatency">&lt;1.2s</span>
+          <button type="submit" class="btn-ink" id="omnibarSubmitBtn">Calibrate Event</button>
+        </form>
+
+        <div class="quick-strip">
+          <span class="quick-lbl">LIVE CHIPS:</span>
+          <div class="quick-chips" id="quickChipsRow">
+            <button type="button" class="q-chip" data-query="Fed Decision in December">Fed December Rate</button>
+            <button type="button" class="q-chip" data-query="Bitcoin hit in 2026">Bitcoin Strikes</button>
+            <button type="button" class="q-chip" data-query="OpenAI">OpenAI Release</button>
+            <button type="button" class="q-chip" data-query="ceasefire">Ceasefire Odds</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEW 01: MISPRICING BOARD + SPLIT LIVE DOSSIER -->
+      <section class="folio-view is-visible" id="view-board">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 01 · LIVE WORLD EVENT PROBABILITY DIVERGENCE</div>
+            <h1 class="editorial-h1">Where crowd emotion diverges from base-rate probability.</h1>
+          </div>
+          <div class="vernier-legend" aria-label="Vernier Probability Scale Key">
+            <span><i class="leg-crowd"></i> Crowd Price (Polymarket)</span>
+            <span><i class="leg-fair"></i> KALIBR Fair Value</span>
+            <span><i class="leg-gap-pos"></i> Underpriced YES</span>
+            <span><i class="leg-gap-neg"></i> Overpriced Hype</span>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="domain-pills" id="domainFilterRow" role="tablist" aria-label="Event Domains">
+            <button type="button" class="dom-pill is-active" data-domain="all">All World Events</button>
+            <button type="button" class="dom-pill" data-domain="macro">Macro &amp; Fed</button>
+            <button type="button" class="dom-pill" data-domain="ai">AI &amp; Tech</button>
+            <button type="button" class="dom-pill" data-domain="geopolitics">Geopolitics</button>
+            <button type="button" class="dom-pill" data-domain="crypto">Crypto</button>
+            <button type="button" class="dom-pill" data-domain="policy">Policy &amp; Elections</button>
+          </div>
+
+          <div class="sort-controls">
+            <label for="sortSelect">RANK BY</label>
+            <select id="sortSelect">
+              <option value="edge">Largest |Edge| Divergence</option>
+              <option value="volume">Highest 24h Volume</option>
+              <option value="tight">Tightest CLOB Spread</option>
+            </select>
+            <button type="button" class="btn-ghost" id="refreshRadarBtn" title="Refresh live Polymarket books">↻ Refresh</button>
+          </div>
+        </div>
+
+        <div class="workbench-split">
+          <!-- LEFT: VERNIER MARKET CARDS -->
+          <div class="market-cards-col" id="marketCardsList" aria-live="polite">
+            <div class="skeleton-card">Fetching live Polymarket orderbooks &amp; calibrating base rates…</div>
+          </div>
+
+          <!-- RIGHT: PINNED INSTANT CALIBRATION INSPECTOR -->
+          <aside class="pinned-inspector" id="pinnedInspector" aria-label="Selected Market Calibration">
+            <div class="inspector-empty">Select any event card to inspect its Vernier calibration, Kelly stake &amp; resolution rule traps.</div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- VIEW 02: DEEP CALIBRATION BENCH (FULL DOSSIER + KELLY + 3-AGENT AI PANEL) -->
+      <section class="folio-view" id="view-bench">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 02 · DEEP ACTUARIAL &amp; 3-AGENT ADVERSARIAL BENCH</div>
+            <h2 class="editorial-h1" id="benchHeadline">Contract Calibration Dossier</h2>
+          </div>
+          <div class="bench-actions">
+            <a href="https://polymarket.com" target="_blank" rel="noopener" class="btn-ghost" id="benchPolymarketLink">Open on Polymarket ↗</a>
+            <button type="button" class="btn-ink" id="runAiPanelBtn">Dispatch 3-Agent AI Panel</button>
+          </div>
+        </div>
+
+        <div id="benchContent" class="bench-container">
+          <!-- Dynamically rendered full workbench -->
+        </div>
+      </section>
+
+      <!-- VIEW 03: PRE-RESOLUTION MERKLE SEALS & BRIER VERIFIER -->
+      <section class="folio-view" id="view-seals">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 03 · ROBINHOOD CHAIN (4663) PRE-RESOLUTION COMMITMENTS</div>
+            <h2 class="editorial-h1">Sealed before resolution. Verifiable byte-for-byte in your browser.</h2>
+          </div>
+          <div class="seal-contract-chip">
+            <span>ForecastSealRegistry.sol</span>
+            <code id="sealRegistryDisplay">Sourcify 0.8.24 Ready</code>
+          </div>
+        </div>
+
+        <div class="seals-layout">
+          <div class="epochs-column">
+            <div class="panel-heading">SEALED HOURLY EPOCHS</div>
+            <div id="epochsList" class="epochs-list"></div>
+          </div>
+
+          <div class="verifier-column">
+            <div class="panel-heading-row">
+              <span class="panel-heading">CLIENT-SIDE KECCAK-256 MERKLE PROOF VERIFIER</span>
+              <button type="button" class="btn-tamper" id="tamperToggleBtn">Simulate +1% Tamper Attack</button>
+            </div>
+            <div id="verifierStage" class="verifier-stage">
+              Select a sealed forecast leaf to recompute its Keccak-256 hash and sorted-pair Merkle root in-browser.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 04: ZERO-DEPENDENCY CLI & STREAMABLE HTTP MCP -->
+      <section class="folio-view" id="view-mcp">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 04 · DEVELOPER &amp; CODING-AGENT SURFACE</div>
+            <h2 class="editorial-h1">Plug live probability calibration into Cursor, Claude Code &amp; Codex.</h2>
+          </div>
+        </div>
+
+        <div class="mcp-grid">
+          <div class="swiss-card">
+            <div class="card-kicker">ZERO-DEPENDENCY CLI + STDIO MCP</div>
+            <h3>One-Command Local Setup</h3>
+            <p class="card-p">Runs on Node.js 20+ with zero external npm dependencies, zero signup, and zero wallet popups.</p>
+            <pre class="code-slab" id="cliInstallSnippet"><code># Scan any Polymarket URL or world event from terminal
+npx github:Kalibr-Agent/kalibr scan "https://polymarket.com/event/fed-decision-in-december"
+
+# Live mispriced world events radar
+npx github:Kalibr-Agent/kalibr radar --domain macro
+
+# Auto-wire Cursor, Claude Code, Codex &amp; Claude Desktop
+npx github:Kalibr-Agent/kalibr init</code></pre>
+            <button type="button" class="btn-ghost copy-snippet-btn" data-copy-target="cliInstallSnippet">Copy CLI Commands</button>
+          </div>
+
+          <div class="swiss-card">
+            <div class="card-kicker">STREAMABLE HTTP MCP (JSON-RPC 2.0)</div>
+            <h3>Zero-Install Remote MCP Endpoint</h3>
+            <p class="card-p">Connect any MCP-compatible agent directly over HTTPS to query live Polymarket edges, rule traps, and Merkle seals.</p>
+            <pre class="code-slab" id="mcpJsonSnippet"><code id="mcpConfigCode">{
+  "mcpServers": {
+    "kalibr": {
+      "url": "https://kalibragent.com/mcp"
+    }
+  }
+}</code></pre>
+            <button type="button" class="btn-ghost copy-snippet-btn" data-copy-target="mcpJsonSnippet">Copy MCP Config</button>
+          </div>
+
+          <div class="swiss-card full-span">
+            <div class="card-kicker">RADICAL TRANSPARENCY · CLAIM &amp; STATUS MATRIX</div>
+            <h3>What Runs Live vs. Known Boundaries</h3>
+            <div class="status-ledger">
+              <div class="ledger-row">
+                <span class="status-pill live">LIVE</span>
+                <strong>Polymarket Gamma &amp; CLOB Ingestion + Multi-Bracket Sibling Sum Coherence</strong>
+                <span>Direct live queries against active world events, excluding noisy sports/esports spam by default.</span>
+              </div>
+              <div class="ledger-row">
+                <span class="status-pill live">LIVE</span>
+                <strong>Actuarial De-Biasing, Quarter-Kelly Sizer &amp; Fine-Print Resolution Trap Scanner</strong>
+                <span>Deterministic &lt;1.2s calibration for CLOB midpoint skew, lockup yield drag, 24h headline churn &amp; rule traps.</span>
+              </div>
+              <div class="ledger-row">
+                <span class="status-pill live">LIVE</span>
+                <strong>3-Agent Adversarial LLM Panel + Verbatim Upstream JSON Figure Verification</strong>
+                <span>Base-Rate Analyst, Resolution Trap Devil &amp; Chief Superforecaster; every cited number checked against raw JSON.</span>
+              </div>
+              <div class="ledger-row">
+                <span class="status-pill live">LIVE</span>
+                <strong>ForecastSealRegistry.sol (Solidity 0.8.24, Chain 4663) &amp; In-Browser Keccak-256 Verifier</strong>
+                <span>Append-only sorted-pair Merkle roots with zero payable, approve, or custodial functions.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

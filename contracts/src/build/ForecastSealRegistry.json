@@ -1,0 +1,389 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "epochHour",
+          "type": "uint64"
+        }
+      ],
+      "name": "AlreadySealed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TokenAlreadyBound",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Unauthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroValue",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint64",
+          "name": "epochHour",
+          "type": "uint64"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "merkleRoot",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "marketCount",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "mispricedCount",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "sealedAt",
+          "type": "uint64"
+        }
+      ],
+      "name": "ForecastEpochSealed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "KalibrTokenBound",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousSealer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newSealer",
+          "type": "address"
+        }
+      ],
+      "name": "SealerUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "TIER_FORECASTER",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "TIER_SYNDICATE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "bindToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "epochHour",
+          "type": "uint64"
+        }
+      ],
+      "name": "getSeal",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "merkleRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "sealedAt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint32",
+              "name": "marketCount",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "mispricedCount",
+              "type": "uint32"
+            }
+          ],
+          "internalType": "struct ForecastSealRegistry.ForecastSeal",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "kalibrToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestEpoch",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "epochHour",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "merkleRoot",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "marketCount",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mispricedCount",
+          "type": "uint32"
+        }
+      ],
+      "name": "sealEpoch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "sealer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newSealer",
+          "type": "address"
+        }
+      ],
+      "name": "setSealer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
+        }
+      ],
+      "name": "tierOf",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "tier",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalEpochsSealed",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalForecastsSealed",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "epochHour",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "leafHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "proof",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "verifyForecastLeaf",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080806040523461007c5760018060a01b031933815f5416175f5533906001541617600155335f7f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08180a3335f7ff22549dd409130dc81be1d022d963887b72c83c603c9f0b92922cf782467f26c8180a361094c90816100818239f35b5f80fdfe6080604081815260049182361015610015575f80fd5b5f3560e01c908163032c1515146106f3575080630cd685bc146106cb5780632aea4d21146106a35780633ff5aa02146105ff578063483c2221146105da5780636547c8001461052f5780638da5cb5b14610508578063940842ac146104e45780639cb118bf146104b9578063add8ffbc14610448578063b33bcf5814610420578063c8f74bb8146103e4578063f2fde38b14610371578063fcb9f37d1461015d5763fce10c57146100c4575f80fd5b34610159576020366003190112610159576001600160a01b0382358181169391929084900361015957825f5416330361014d578315610140575050600154826bffffffffffffffffffffffff60a01b821617600155167ff22549dd409130dc81be1d022d963887b72c83c603c9f0b92922cf782467f26c5f80a3005b51637c946ed760e01b8152fd5b516282b42960e81b8152fd5b5f80fd5b5090346101595760803660031901126101595761017861071b565b91602435926044359163ffffffff8084168094036101595760643590811680910361015957600154336001600160a01b0391821614159081610363575b506103545767ffffffffffffffff94858416958615801561034c575b8015610344575b61033557865f5281602052806001855f2001541661031e57917fe8d8fed2c99fa3009023ae00614e85da07314bc3178992fdd971b03aebeec1109593918360609694421694845161022881610732565b8b81528a83600160208401938a8552898101978c89528d8201948a86525f52602052895f209051815501925116906bffffffff000000000000000083549651891b169063ffffffff8c1b90518c1b16916fffffffffffffffffffffffffffffffff19809716171717905560025490828260a01c168b116102f0575b5050600354916fffffffffffffffff0000000000000000878360018187160116938467ffffffffffffffff19871617881c1601861b169216171760035581519384526020840152820152a3005b67ffffffffffffffff60a01b1990911660a09190911b67ffffffffffffffff60a01b16176002555f806102a3565b8351631704333160e21b8152808301889052602490fd5b508251637c946ed760e01b8152fd5b5085156101d8565b5087156101d1565b81516282b42960e81b81528590fd5b90505f54163314155f6101b5565b5034610159576020366003190112610159576001600160a01b0382358181169390849003610159575f549182169283330361014d5784156101405750506001600160a01b03191682175f9081557f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3005b50903461015957602036600319011261015957356001600160a01b03811681036101595761041190610827565b60ff8351921682526020820152f35b5034610159575f3660031901126101595760025490516001600160a01b039091168152602090f35b50346101595760603660031901126101595761046261071b565b916044359067ffffffffffffffff90818311610159573660238401121561015957820135908111610159573660248260051b840101116101595760209360246104b09301906024359061077e565b90519015158152f35b5034610159575f3660031901126101595760209067ffffffffffffffff60025460a01c169051908152f35b5034610159575f366003190112610159576020905169d3c21bcecceda10000008152f35b5034610159575f366003190112610159575f5490516001600160a01b039091168152602090f35b50346101595760203660031901126101595760809161054c61071b565b905f6060845161055b81610732565b8281528260208201528286820152015267ffffffffffffffff8092165f52602052815f209180519061058c82610732565b60018454948584520154916020810190848416825263ffffffff948592836060868501948289891c168652019660601c16865284519788525116602087015251169084015251166060820152f35b5034610159575f36600319011261015957602090516a0422ca8b0a00a4250000008152f35b5034610159576020366003190112610159576001600160a01b038235818116929083900361015957815f541633036106955782156106865760025491821661067757506001600160a01b03191681176002557faf1cba219425fe3c4cadd840d89daa933d52c5f4ccd0fcd555715f8865dfe1345f80a2005b5163f8b5804160e01b81528390fd5b51637c946ed760e01b81528390fd5b516282b42960e81b81528390fd5b5034610159575f3660031901126101595760015490516001600160a01b039091168152602090f35b5034610159575f3660031901126101595760209067ffffffffffffffff600354169051908152f35b905034610159575f3660031901126101595767ffffffffffffffff602092600354901c168152f35b6004359067ffffffffffffffff8216820361015957565b6080810190811067ffffffffffffffff82111761074e57604052565b634e487b7160e01b5f52604160045260245ffd5b6060810190811067ffffffffffffffff82111761074e57604052565b67ffffffffffffffff90939193165f52602060046020526040805f205494851561081d57939291905f935b8385106107b95750505050501490565b90919293946001908660051b830135808211155f146107fa57845190868201928352858201528481526107eb81610762565b519020955b01939291906107a9565b908451908682019283528582015284815261081481610762565b519020956107f0565b5050505050505f90565b6002546001600160a01b0390811692918315801561090c575b610902576040516370a0823160e01b81529116600482015291602090839060249082905afa9182156108f7575f926108ad575b50816a0422ca8b0a00a4250000008110156108a6575069d3c21bcecceda10000008210156108a0575f9190565b60019190565b6002925090565b90915060203d6020116108f0575b601f8101601f1916820167ffffffffffffffff81118382101761074e576020918391604052810103126101595751905f610873565b503d6108bb565b6040513d5f823e3d90fd5b505090505f905f90565b508181161561084056fea2646970667358221220853e1d8cc6396dbe1e80f76ea2022b8ad6fb5ae2397547ef0583893d4bad89aa64736f6c63430008180033"
+}

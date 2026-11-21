@@ -1,0 +1,17 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.DS_Store
+packages/cli/src/_vendor/
+launch.json
+brand/candidates/
+brand/small48.png
+brand/warmup-*.png
+brand/warmup-*.svg
+scripts/deploy-cloudflare.mjs
+scripts/make-vector-candidates.mjs
+scripts/build-brand.mjs
+scripts/build-warmup-cards.mjs

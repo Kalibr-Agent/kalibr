@@ -1,0 +1,51 @@
+{
+  "name": "kalibr",
+  "version": "0.1.0",
+  "description": "Autonomous AI probability calibration CLI & stdio MCP server: live Polymarket mispricing radar, fine-print rule-trap scanner, Quarter-Kelly sizing, and Robinhood Chain (4663) Keccak-256 Merkle proof verifier.",
+  "type": "module",
+  "bin": {
+    "kalibr": "./bin/kalibr.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "prepack": "node scripts/vendor-core.mjs",
+    "postpack": "node scripts/vendor-core.mjs --clean"
+  },
+  "keywords": [
+    "polymarket",
+    "prediction-markets",
+    "probability-calibration",
+    "ai-agents",
+    "mcp",
+    "mcp-server",
+    "cursor",
+    "claude-code",
+    "codex",
+    "kelly-criterion",
+    "robinhood-chain",
+    "merkle-proof"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://kalibragent.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kalibr-Agent/kalibr.git",
+    "directory": "packages/cli"
+  },
+  "author": {
+    "name": "KALIBR Atelier",
+    "url": "https://kalibragent.com"
+  },
+  "license": "MIT"
+}

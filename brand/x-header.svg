@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <rect width="1500" height="500" fill="#F2EDE3"/>
+  <g stroke="#E0D9CA" stroke-width="1">
+    <line x1="0" y1="100" x2="1500" y2="100"/>
+    <line x1="0" y1="250" x2="1500" y2="250"/>
+    <line x1="0" y1="400" x2="1500" y2="400"/>
+    <line x1="460" y1="0" x2="460" y2="500"/>
+    <line x1="980" y1="0" x2="980" y2="500"/>
+  </g>
+  <rect x="20" y="20" width="1460" height="460" fill="none" stroke="#141513" stroke-width="3"/>
+
+  <!-- Subtle Flat Vector Emblem in Upper-Left Safe Zone -->
+  <g transform="translate(148 56) scale(0.18)">
+    <rect width="1024" height="1024" rx="200" fill="#111412"/>
+    <polygon points="274,228 408,228 324,796 190,796" fill="#FAF7F0"/>
+    <polygon points="256,350 314,350 310,374 252,374" fill="#111412"/>
+    <polygon points="242,446 318,446 314,470 238,470" fill="#111412"/>
+    <polygon points="228,542 304,542 300,566 224,566" fill="#111412"/>
+    <polygon points="434,492 558,492 496,574 372,574" fill="#7D8A82"/>
+    <polygon points="434,492 710,228 854,228 566,504" fill="#16B57D"/>
+    <polygon points="462,534 590,510 798,796 654,796" fill="#FAF7F0"/>
+    <polygon points="758,452 818,512 758,572 698,512" fill="#F04E37"/>
+  </g>
+
+  <text x="500" y="102" font-family="Consolas" font-weight="bold" font-size="16" fill="#0C694D" letter-spacing="3">ACTUARIAL AI AGENTS · ROBINHOOD CHAIN (4663)</text>
+  <text x="498" y="190" font-family="Georgia" font-weight="bold" font-size="84" fill="#141513">KALIBR</text>
+  <text x="500" y="236" font-family="Georgia" font-style="italic" font-size="26" fill="#383934">Crowd prices emotion. Calibration prices probability.</text>
+
+  <rect x="500" y="272" width="936" height="162" rx="10" fill="#FAF8F3" stroke="#141513" stroke-width="2.5"/>
+  <text x="532" y="312" font-family="Consolas" font-weight="bold" font-size="16" fill="#66655D">POLYMARKET CROWD: 54.0%</text>
+  <text x="1404" y="312" text-anchor="end" font-family="Consolas" font-weight="bold" font-size="17" fill="#0C694D">KALIBR FAIR: 73.5% (+19.5% EDGE)</text>
+
+  <line x1="532" y1="360" x2="1404" y2="360" stroke="#B8B09F" stroke-width="4"/>
+  <rect x="1002" y="350" width="170" height="20" rx="4" fill="#16B57D"/>
+  <circle cx="1002" cy="360" r="13" fill="#FFFFFF" stroke="#141513" stroke-width="5"/>
+  <g transform="translate(1172 360) rotate(45)">
+    <rect x="-11" y="-11" width="22" height="22" rx="2" fill="#0C694D"/>
+  </g>
+  <text x="532" y="412" font-family="Consolas" font-size="14" fill="#383934">3-Agent LLM Superforecasting  ·  Fine-Print Trap Audit  ·  Pre-Resolution Keccak-256 Seals</text>
+</svg>
