@@ -750,22 +750,36 @@ export default {
         const walletParam = url.searchParams.get("wallet") || req.headers.get("x-wallet-address") || "";
         const rpcUrl = env.RH_RPC_URL || DEFAULT_RH_RPC_URL;
 
-        const [headBlock, registryStats, caller, brier, epochCountRow, forecastCountRow, dossierCountRow] =
+        const [headBlock, rawRegistryStats, caller, brier, onchainEpochRow, epochCountRow, forecastCountRow, dossierCountRow] =
           await Promise.all([
             getChainHead({ rpcUrl }).catch(() => null),
-            readRegistryStats(env.SEAL_REGISTRY_ADDRESS || "", { rpcUrl }).catch(() => ({
-              configured: Boolean(env.SEAL_REGISTRY_ADDRESS),
-              registryAddress: env.SEAL_REGISTRY_ADDRESS || null,
-              latestEpoch: 0,
-              totalEpochsSealed: 0,
-              totalForecastsSealed: 0,
-            })),
+            readRegistryStats(env.SEAL_REGISTRY_ADDRESS || "", { rpcUrl }).catch(() => null),
             resolveCallerAccess(env, walletParam),
             getBrierSummary(env),
+            env.DB
+              ? env.DB
+                  .prepare(
+                    "SELECT COUNT(*) AS c, COALESCE(SUM(market_count), 0) AS m, COALESCE(MAX(epoch_hour), 0) AS latest FROM sealed_epochs WHERE tx_hash IS NOT NULL AND tx_hash != ''"
+                  )
+                  .first()
+              : Promise.resolve({ c: 0, m: 0, latest: 0 }),
             env.DB ? env.DB.prepare("SELECT COUNT(*) AS c FROM sealed_epochs").first() : Promise.resolve({ c: 0 }),
             env.DB ? env.DB.prepare("SELECT COUNT(*) AS c FROM sealed_forecasts").first() : Promise.resolve({ c: 0 }),
             env.DB ? env.DB.prepare("SELECT COUNT(*) AS c FROM ai_dossiers").first() : Promise.resolve({ c: 0 }),
           ]);
+
+        const verifiedD1Epochs = Number(onchainEpochRow?.c || 0);
+        const verifiedD1Forecasts = Number(onchainEpochRow?.m || 0);
+        const registryStats =
+          rawRegistryStats && rawRegistryStats.totalEpochsSealed > 0
+            ? rawRegistryStats
+            : {
+                configured: Boolean(env.SEAL_REGISTRY_ADDRESS),
+                registryAddress: env.SEAL_REGISTRY_ADDRESS || null,
+                latestEpoch: rawRegistryStats?.latestEpoch || Number(onchainEpochRow?.latest || 0),
+                totalEpochsSealed: Math.max(rawRegistryStats?.totalEpochsSealed || 0, verifiedD1Epochs),
+                totalForecastsSealed: Math.max(rawRegistryStats?.totalForecastsSealed || 0, verifiedD1Forecasts),
+              };
 
         return json({
           ok: true,

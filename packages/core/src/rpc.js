@@ -32,7 +32,10 @@ function padUint64Word(num) {
 export async function rpcCall(method, params = [], { rpcUrl = DEFAULT_RH_RPC_URL, fetchImpl = fetch } = {}) {
   const res = await fetchImpl(rpcUrl, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: {
+      "content-type": "application/json",
+      "user-agent": "kalibr-rpc-client/1.0",
+    },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
     signal: AbortSignal.timeout(7000),
   });
@@ -40,6 +43,33 @@ export async function rpcCall(method, params = [], { rpcUrl = DEFAULT_RH_RPC_URL
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || "RPC error");
   return data.result;
+}
+
+export async function rpcBatch(calls = [], { rpcUrl = DEFAULT_RH_RPC_URL, fetchImpl = fetch } = {}) {
+  const payload = calls.map((c, idx) => ({
+    jsonrpc: "2.0",
+    id: idx + 1,
+    method: c.method,
+    params: c.params || [],
+  }));
+  const res = await fetchImpl(rpcUrl, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "user-agent": "kalibr-rpc-client/1.0",
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(7000),
+  });
+  if (!res.ok) throw new Error(`Robinhood Chain RPC batch HTTP ${res.status}`);
+  const arr = await res.json();
+  if (!Array.isArray(arr)) throw new Error("Invalid RPC batch response");
+  const byId = new Map(arr.map((item) => [item.id, item]));
+  return payload.map((p) => {
+    const hit = byId.get(p.id);
+    if (!hit || hit.error) return null;
+    return hit.result;
+  });
 }
 
 export async function getChainHead({ rpcUrl = DEFAULT_RH_RPC_URL, fetchImpl = fetch } = {}) {
@@ -105,11 +135,14 @@ export async function readRegistryStats(registryAddress, opts = {}) {
   if (!isValidEvmAddress(registryAddress)) {
     return { configured: false, latestEpoch: 0, totalEpochsSealed: 0, totalForecastsSealed: 0 };
   }
-  const [latestHex, totalHex, forecastsHex] = await Promise.all([
-    rpcCall("eth_call", [{ to: registryAddress, data: SEL_LATEST_EPOCH }, "latest"], opts),
-    rpcCall("eth_call", [{ to: registryAddress, data: SEL_TOTAL_EPOCHS }, "latest"], opts),
-    rpcCall("eth_call", [{ to: registryAddress, data: SEL_TOTAL_FORECASTS }, "latest"], opts),
-  ]);
+  const [latestHex, totalHex, forecastsHex] = await rpcBatch(
+    [
+      { method: "eth_call", params: [{ to: registryAddress, data: SEL_LATEST_EPOCH }, "latest"] },
+      { method: "eth_call", params: [{ to: registryAddress, data: SEL_TOTAL_EPOCHS }, "latest"] },
+      { method: "eth_call", params: [{ to: registryAddress, data: SEL_TOTAL_FORECASTS }, "latest"] },
+    ],
+    opts
+  );
   return {
     configured: true,
     registryAddress,
