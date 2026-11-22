@@ -9,6 +9,7 @@ packages/cli/src/_vendor/
 launch.json
 launch-receipt.json
 cadence.json
+.cadence-state.json
 .stop-burn
 brand/candidates/
 brand/small48.png
@@ -16,8 +17,14 @@ brand/warmup-*.png
 brand/warmup-*.svg
 brand/demo-live.mp4
 brand/demo-preview-*.jpg
+brand/holder-tiers-card.png
+brand/live-case-*.png
+brand/onchain-seals-*.png
+brand/multipage-*.png
 scripts/record-live-demo.mjs
+scripts/build-tiers-card.mjs
 scripts/seal-onchain-epochs.mjs
+scripts/buyback-burn-now.mjs
 scripts/deploy-cloudflare.mjs
 scripts/make-vector-candidates.mjs
 scripts/build-brand.mjs

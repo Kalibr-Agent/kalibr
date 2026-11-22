@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multi-Leg Quarter-Kelly Slate &amp; Correlation Sizer — KALIBR</title>
+  <meta name="description" content="Size multi-position Polymarket portfolios in under 1.2s. Quarter-Kelly stake sizing after spread cost, 1/sqrt(k) domain-correlation haircuts, and dry-powder USDC reserve caps." />
+  <meta property="og:title" content="KALIBR /kelly — Multi-Leg Polymarket Kelly Slate Builder" />
+  <meta property="og:description" content="Build a correlation-adjusted Quarter-Kelly Polymarket slate from live calibrated edges with zero wallet connection." />
+  <meta property="og:image" content="https://kalibragent.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kalibragent.com/og-image.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <div class="atelier-frame">
+    <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
+      <div class="spine-brand">
+        <a href="/" class="brand-lockup">
+          <img src="/logo.png" alt="KALIBR Emblem" class="brand-mark" width="42" height="42" />
+          <div class="brand-copy">
+            <span class="brand-word">KALIBR</span>
+            <span class="brand-sub">PROBABILITY ATELIER</span>
+          </div>
+        </a>
+        <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
+      </div>
+
+      <nav class="folio-nav" aria-label="Primary Folios">
+        <a href="/" class="folio-btn">
+          <span class="folio-idx">01</span>
+          <span class="folio-meta">
+            <strong>Mispricing Board</strong>
+            <small>Live Polymarket Edge &amp; Bench</small>
+          </span>
+        </a>
+        <a href="/arb" class="folio-btn">
+          <span class="folio-idx">02</span>
+          <span class="folio-meta">
+            <strong>NegRisk &amp; Sum-of-Odds <span class="folio-new-tag">NEW</span></strong>
+            <small>Dutch Books &amp; Overround</small>
+          </span>
+        </a>
+        <a href="/traps" class="folio-btn">
+          <span class="folio-idx">03</span>
+          <span class="folio-meta">
+            <strong>Resolution Trap Radar <span class="folio-new-tag">NEW</span></strong>
+            <small>Fine-Print &amp; UMA Audit</small>
+          </span>
+        </a>
+        <a href="/kelly" class="folio-btn is-active">
+          <span class="folio-idx">04</span>
+          <span class="folio-meta">
+            <strong>Kelly Slate Builder <span class="folio-new-tag">NEW</span></strong>
+            <small>Multi-Leg Correlation Sizer</small>
+          </span>
+        </a>
+        <a href="/seals" class="folio-btn">
+          <span class="folio-idx">05</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Onchain Merkle Verifier</small>
+          </span>
+        </a>
+        <a href="/agents" class="folio-btn">
+          <span class="folio-idx">06</span>
+          <span class="folio-meta">
+            <strong>CLI, MCP &amp; $KALIBR</strong>
+            <small>Agent Tools &amp; Holder Tiers</small>
+          </span>
+        </a>
+      </nav>
+
+      <div class="spine-telemetry">
+        <div class="telemetry-header">
+          <span class="pulse-dot" id="chainPulseDot"></span>
+          <span id="chainPulseText">ONCHAIN TELEMETRY · LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tel-cell">
+            <span class="tel-val" id="statMispriced">—</span>
+            <span class="tel-lbl">LIVE EDGES</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statSealedForecasts">—</span>
+            <span class="tel-lbl">SEALED ODDS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statEpochs">—</span>
+            <span class="tel-lbl">EPOCHS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statHeadBlock">—</span>
+            <span class="tel-lbl">HEAD BLOCK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spine-pass">
+        <div class="pass-top">
+          <span class="pass-kicker">0-WALLET ACCESS</span>
+          <span class="pass-badge" id="callerTierBadge">VISITOR</span>
+        </div>
+        <p class="pass-note">Zero signatures or approvals. Paste any public 0x address to check $KALIBR tier.</p>
+        <form id="walletCheckForm" class="pass-form">
+          <input type="text" id="walletInput" placeholder="0x… public address" autocomplete="off" spellcheck="false" />
+          <button type="submit">Verify</button>
+        </form>
+        <div class="pass-status" id="walletStatusLine">Unlimited &lt;1.2s scans · 15 AI panels/day</div>
+      </div>
+
+      <div class="spine-footer">
+        <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
+          <span class="ca-plate-lbl">$KALIBR CONTRACT</span>
+          <code id="caDisplay">$KALIBR: 0x002E44f3c1856a71acAF9FB3067e96a4348607c4</code>
+        </button>
+        <div class="spine-links">
+          <a href="https://x.com/kalibragent" target="_blank" rel="noopener">X / TWITTER ↗</a>
+          <a href="https://github.com/Kalibr-Agent/kalibr" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a href="/SKILL.md" target="_blank" rel="noopener">SKILL.MD ↗</a>
+          <a href="/llms.txt" target="_blank" rel="noopener">LLMS.TXT ↗</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="atelier-main">
+      <section class="folio-view is-visible">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 04 · MULTI-LEG QUARTER-KELLY &amp; CORRELATION SIZER</div>
+            <h1 class="editorial-h1">Size your entire Polymarket slate without correlated blowups.</h1>
+          </div>
+          <div>
+            <button type="button" class="btn-ink" id="copySlateMarkdownBtn">Copy Markdown Trade Slate</button>
+          </div>
+        </div>
+
+        <div class="kpi-ribbon">
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">DEPLOYED CAPITAL</span>
+            <span class="kpi-tile-val" id="kpiKellyDeployed">$0</span>
+            <span class="kpi-tile-sub" id="kpiKellyDeployedSub">0% of bankroll</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">DRY-POWDER USDC RESERVE</span>
+            <span class="kpi-tile-val pos" id="kpiKellyReserve">$0</span>
+            <span class="kpi-tile-sub" id="kpiKellyReserveSub">Unallocated buffer</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">EXPECTED SLATE EV</span>
+            <span class="kpi-tile-val pos" id="kpiKellyEv">+$0</span>
+            <span class="kpi-tile-sub">Net of half-spread execution</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">CORRELATION REGIME</span>
+            <span class="kpi-tile-val amber" id="kpiKellyHaircut">1.00×</span>
+            <span class="kpi-tile-sub">1/√k same-domain damping</span>
+          </div>
+        </div>
+
+        <div class="slate-controls-card">
+          <div>
+            <div class="kelly-slider-row">
+              <span>PORTFOLIO BANKROLL (USDC)</span>
+              <strong id="slateBankrollLabel">$2,500</strong>
+            </div>
+            <input type="range" id="slateBankrollSlider" min="250" max="50000" step="250" value="2500" style="width:100%;accent-color:var(--jade-700);" />
+            <div class="preset-pills" id="bankrollPresets">
+              <button type="button" class="preset-pill" data-val="1000">$1,000</button>
+              <button type="button" class="preset-pill is-active" data-val="2500">$2,500</button>
+              <button type="button" class="preset-pill" data-val="5000">$5,000</button>
+              <button type="button" class="preset-pill" data-val="10000">$10,000</button>
+              <button type="button" class="preset-pill" data-val="25000">$25,000</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-kicker">MAX TOTAL DEPLOYMENT CAP</div>
+            <div class="preset-pills" id="capPresets">
+              <button type="button" class="preset-pill" data-cap="0.35">35% Conservative</button>
+              <button type="button" class="preset-pill is-active" data-cap="0.55">55% Standard</button>
+              <button type="button" class="preset-pill" data-cap="0.75">75% Aggressive</button>
+            </div>
+          </div>
+
+          <div>
+            <button type="button" class="btn-ghost" id="resetTop3Btn">↻ Load Top 3 Live Edges</button>
+          </div>
+        </div>
+
+        <div class="workbench-split">
+          <div>
+            <div class="panel-heading">ACTIVE QUARTER-KELLY ALLOCATION SLATE</div>
+            <div class="market-cards-col" id="activeSlateList">
+              <div class="skeleton-card">Loading live calibrated edges into your Quarter-Kelly slate…</div>
+            </div>
+          </div>
+
+          <aside class="pinned-inspector">
+            <div class="insp-block-h">ADD LIVE MISPRICED CONTRACTS TO SLATE</div>
+            <div id="candidatePoolList" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/kelly.js"></script>
+</body>
+</html>

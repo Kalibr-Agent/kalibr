@@ -288,6 +288,28 @@ export function auditResolutionRules({
     });
   }
 
+  const feedRe = /\b(binance\s+spot|coinbase\s+spot|coingecko|coinmarketcap|1-minute\s+candle|1m\s+candle|high\s+price|closing\s+price\s+on)\b/i;
+  if (feedRe.test(text)) {
+    traps.push({
+      code: "VENUE_FEED_SPECIFICITY",
+      severity: "MEDIUM",
+      title: "Single-Venue Candle / Price Source Rule",
+      detail: "Wicks on perp venues or rival spot exchanges do not count — only the exact named venue & candle interval settles.",
+      snippet: extractSnippet(feedRe),
+    });
+  }
+
+  const revRe = /\b(first\s+official\s+release|initial\s+estimate|subsequent\s+revisions?\s+will\s+not|seasonally\s+adjusted)\b/i;
+  if (revRe.test(text)) {
+    traps.push({
+      code: "REVISION_EXCLUSION_CLAUSE",
+      severity: "LOW",
+      title: "Initial Print Only (Revisions Ignored)",
+      detail: "Contract settles on the initial statistical release even if revised sharply in subsequent months.",
+      snippet: extractSnippet(revRe),
+    });
+  }
+
   if (Math.abs(oneDayChange) >= 0.08 && liquidityUsd > 0 && volume24hUsd / liquidityUsd > 1.5) {
     traps.push({
       code: "HEADLINE_SPIKE_CHURN",
@@ -691,3 +713,285 @@ export function computeBrierScore(resolvedRecords) {
     crowdBrier > 0 ? Number((((crowdBrier - kalibrBrier) / crowdBrier) * 100).toFixed(1)) : 0;
   return { count: n, kalibrBrier, crowdBrier, skillImprovementPct };
 }
+
+/**
+ * Analyzes a Polymarket multi-outcome NegRisk event (mutually exclusive outcomes on Conditional Token Framework)
+ * separating Closed-Partition books (sum must equal $1.00) from Open-Field Augmented books (1 - sum = Unlisted Field odds).
+ */
+export function analyzeNegRiskEvent(event) {
+  if (!event || !event.negRisk || isSportsOrGameEvent(event)) return null;
+  const rawMarkets = (event.markets || []).filter((m) => m && m.closed !== true && m.active !== false);
+  if (rawMarkets.length < 3) return null;
+
+  const parsed = rawMarkets.map((m) => parseMarketNumbers(m, event));
+  const isAugmented = Boolean(event.negRiskAugmented);
+  const partitionType = isAugmented ? "AUGMENTED_OPEN_FIELD" : "CLOSED_PARTITION";
+
+  let sumMidProb = 0;
+  let sumBestAsk = 0;
+  let sumBestBid = 0;
+  let allHaveValidAsk = true;
+
+  for (const m of parsed) {
+    sumMidProb += m.crowdProb;
+    const ask = m.bestAsk !== null && m.bestAsk > 0 ? m.bestAsk : m.crowdProb;
+    if (m.bestAsk === null || m.bestAsk <= 0 || m.bestAsk >= 0.999) allHaveValidAsk = false;
+    sumBestAsk += ask;
+    sumBestBid += m.bestBid !== null && m.bestBid > 0 ? m.bestBid : 0;
+  }
+
+  sumMidProb = Number(sumMidProb.toFixed(4));
+  sumBestAsk = Number(sumBestAsk.toFixed(4));
+  sumBestBid = Number(sumBestBid.toFixed(4));
+
+  const overroundBps = Math.round((sumMidProb - 1.0) * 10_000);
+  const dutchBookAskEdgeBps = !isAugmented && allHaveValidAsk ? Math.round((1.0 - sumBestAsk) * 10_000) : 0;
+  const mintSetBidEdgeBps = Math.round((sumBestBid - 1.0) * 10_000);
+  const unlistedFieldProb = isAugmented ? Number(clamp(1.0 - sumMidProb, 0, 0.99).toFixed(4)) : 0;
+
+  let arbVerdict = "TIGHT_COHERENT";
+  let actionSummary = "Orderbook probabilities sum tightly around 100.0% parity.";
+  let signalTone = "flat";
+
+  if (!isAugmented && allHaveValidAsk && sumBestAsk <= 0.998) {
+    arbVerdict = "DUTCH_BOOK_ASK_ARB";
+    actionSummary = `Complete-set YES ask basket costs ${(sumBestAsk * 100).toFixed(2)}¢ for $1.00 guaranteed settlement (+${(dutchBookAskEdgeBps / 100).toFixed(2)}% gross arb).`;
+    signalTone = "pos";
+  } else if (sumBestBid >= 1.002) {
+    arbVerdict = "MINT_SET_BID_ARB";
+    actionSummary = `Sum of executable YES bids is ${(sumBestBid * 100).toFixed(2)}¢ (>100¢) — mint $1.00 complete set via NegRiskAdapter & hit resting bids (+${(mintSetBidEdgeBps / 100).toFixed(2)}%).`;
+    signalTone = "pos";
+  } else if (!isAugmented && sumMidProb >= 1.018) {
+    arbVerdict = "RETAIL_OVERROUND";
+    actionSummary = `Closed outcome partition sums to ${(sumMidProb * 100).toFixed(1)}% (+${(overroundBps / 100).toFixed(1)}% excess lottery vigorish). Fade overpriced tail brackets via NO.`;
+    signalTone = "neg";
+  } else if (!isAugmented && sumMidProb <= 0.982) {
+    arbVerdict = "UNDERPRICED_PARTITION";
+    actionSummary = `Closed outcome partition sums to ${(sumMidProb * 100).toFixed(1)}% (${(overroundBps / 100).toFixed(1)}% below parity). Passive limit YES bids capture positive drift.`;
+    signalTone = "pos";
+  } else if (isAugmented && sumMidProb >= 1.01) {
+    arbVerdict = "OPEN_FIELD_OVERROUND";
+    actionSummary = `Named candidates already sum to ${(sumMidProb * 100).toFixed(1)}% (>100%) while leaving 0% room for unlisted dark-horse entrants.`;
+    signalTone = "neg";
+  } else if (isAugmented && unlistedFieldProb >= 0.04) {
+    arbVerdict = "DARK_HORSE_IMPLIED";
+    actionSummary = `Listed candidates sum to ${(sumMidProb * 100).toFixed(1)}%, pricing ${(unlistedFieldProb * 100).toFixed(1)}% implied probability on an unlisted 'Other / Field' entrant.`;
+    signalTone = "info";
+  }
+
+  const brackets = parsed
+    .slice()
+    .sort((a, b) => b.crowdProb - a.crowdProb)
+    .slice(0, 10)
+    .map((b) => {
+      const normalizedFairProb =
+        !isAugmented && sumMidProb > 0.25 ? Number((b.crowdProb / sumMidProb).toFixed(4)) : b.crowdProb;
+      return {
+        marketId: b.marketId,
+        label: b.groupItemTitle || b.question,
+        crowdProb: Number(b.crowdProb.toFixed(4)),
+        normalizedFairProb,
+        bracketSkewBps: Math.round((normalizedFairProb - b.crowdProb) * 10_000),
+        bestBid: b.bestBid,
+        bestAsk: b.bestAsk,
+        spread: b.spread,
+        volume24hUsd: b.volume24hUsd,
+        liquidityUsd: b.liquidityUsd,
+      };
+    });
+
+  const volume24hUsd = Math.round(Number(event.volume24hr || 0) || parsed.reduce((a, x) => a + x.volume24hUsd, 0));
+  const liquidityUsd = Math.round(Number(event.liquidity || 0) || parsed.reduce((a, x) => a + x.liquidityUsd, 0));
+
+  return {
+    eventId: String(event.id || ""),
+    eventSlug: String(event.slug || ""),
+    eventTitle: String(event.title || ""),
+    polymarketUrl: `https://polymarket.com/event/${event.slug}`,
+    domain: classifyEventDomain(event),
+    partitionType,
+    isAugmented,
+    bracketCount: parsed.length,
+    sumMidProb,
+    sumBestAsk,
+    sumBestBid,
+    overroundBps,
+    dutchBookAskEdgeBps,
+    mintSetBidEdgeBps,
+    unlistedFieldProb,
+    arbVerdict,
+    signalTone,
+    actionSummary,
+    volume24hUsd,
+    liquidityUsd,
+    brackets,
+  };
+}
+
+/**
+ * Fetches live multi-bracket NegRisk books on Polymarket and ranks executable Dutch-book / Mint-set / Overround anomalies first.
+ */
+export async function fetchNegRiskArbRadar({ limit = 24, mode = "all", fetchImpl = fetch } = {}) {
+  const url = `${GAMMA_API_BASE}/events?active=true&closed=false&limit=100&order=volume24hr&ascending=false`;
+  const res = await fetchImpl(url, {
+    headers: { accept: "application/json" },
+    signal: AbortSignal.timeout(9000),
+  });
+  if (!res.ok) throw new Error(`Polymarket Gamma API HTTP ${res.status}`);
+  const events = await res.json();
+  if (!Array.isArray(events)) return [];
+
+  const rows = [];
+  const seen = new Set();
+  for (const ev of events) {
+    if (!ev || !ev.slug || seen.has(ev.slug)) continue;
+    seen.add(ev.slug);
+    const analyzed = analyzeNegRiskEvent(ev);
+    if (!analyzed) continue;
+    if (analyzed.volume24hUsd < 1000 && analyzed.liquidityUsd < 1500) continue;
+    if (mode === "closed" && analyzed.isAugmented) continue;
+    if (mode === "open" && !analyzed.isAugmented) continue;
+    rows.push(analyzed);
+  }
+
+  const priorityWeight = (v) => {
+    if (v === "DUTCH_BOOK_ASK_ARB" || v === "MINT_SET_BID_ARB") return 4;
+    if (v === "RETAIL_OVERROUND" || v === "UNDERPRICED_PARTITION" || v === "OPEN_FIELD_OVERROUND") return 3;
+    if (v === "DARK_HORSE_IMPLIED") return 2;
+    return 1;
+  };
+
+  rows.sort((a, b) => {
+    const pw = priorityWeight(b.arbVerdict) - priorityWeight(a.arbVerdict);
+    if (pw !== 0) return pw;
+    return Math.abs(b.overroundBps) * Math.log10(Math.max(100, b.volume24hUsd)) -
+      Math.abs(a.overroundBps) * Math.log10(Math.max(100, a.volume24hUsd));
+  });
+
+  return rows.slice(0, limit);
+}
+
+/**
+ * Computes deterministic resolution-trap severity score (0-100) for a calibrated Polymarket contract.
+ */
+export function scoreContractTrapRisk(market) {
+  const traps = market?.ruleTraps || [];
+  let score = 0;
+  for (const t of traps) {
+    if (t.severity === "HIGH") score += 38;
+    else if (t.severity === "MEDIUM") score += 22;
+    else score += 10;
+  }
+  score = clamp(score, 0, 98);
+  let trapVerdict = "CLEAN_RULES";
+  if (score >= 44 || traps.some((t) => t.severity === "HIGH")) {
+    trapVerdict = "HIGH_DISPUTE_RISK";
+  } else if (score >= 20) {
+    trapVerdict = "CAUTION_FINE_PRINT";
+  }
+  return { trapRiskScore: score, trapVerdict, trapCount: traps.length };
+}
+
+/**
+ * Scans live high-volume Polymarket contracts and surfaces contracts carrying fine-print ambiguity, oracle, cutoff, or spread traps.
+ */
+export async function fetchResolutionTrapRadar({ limit = 24, domainFilter = "all", fetchImpl = fetch } = {}) {
+  const markets = await fetchCuratedPolymarketRadar({ limit: 36, domainFilter, fetchImpl });
+  const enriched = markets.map((m) => ({
+    ...m,
+    ...scoreContractTrapRisk(m),
+  }));
+
+  enriched.sort((a, b) => {
+    if (b.trapRiskScore !== a.trapRiskScore) return b.trapRiskScore - a.trapRiskScore;
+    return b.volume24hUsd - a.volume24hUsd;
+  });
+
+  return enriched.slice(0, limit);
+}
+
+/**
+ * Builds a multi-position Quarter-Kelly allocation slate with domain-correlation haircuts (1/sqrt(k))
+ * and a hard portfolio deployment ceiling so correlated world events never over-leverage a bankroll.
+ */
+export function computePortfolioKellySlate(markets, { bankrollUsd = 1000, maxTotalAllocationPct = 0.55 } = {}) {
+  const bankroll = Math.max(50, Number(bankrollUsd) || 1000);
+  const capPct = clamp(Number(maxTotalAllocationPct) || 0.55, 0.1, 0.9);
+  const list = Array.isArray(markets) ? markets.filter(Boolean).slice(0, 8) : [];
+
+  const domainCounts = new Map();
+  for (const m of list) {
+    const domId = m.domain?.id || "general";
+    domainCounts.set(domId, (domainCounts.get(domId) || 0) + 1);
+  }
+
+  const rawLegs = list.map((m) => {
+    const baseKelly = computeKellySizing({
+      fairProb: m.fairProb,
+      crowdProb: m.crowdProb,
+      spread: m.spread,
+      bankrollUsd: bankroll,
+    });
+    const domId = m.domain?.id || "general";
+    const sameDomainCount = domainCounts.get(domId) || 1;
+    const correlationHaircut = Number((1 / Math.sqrt(sameDomainCount)).toFixed(3));
+    const adjustedFraction = Number((baseKelly.quarterKellyFraction * correlationHaircut).toFixed(4));
+    return {
+      marketId: m.marketId,
+      eventSlug: m.eventSlug,
+      question: m.question,
+      polymarketUrl: m.polymarketUrl,
+      domain: m.domain,
+      crowdProb: m.crowdProb,
+      fairProb: m.fairProb,
+      edgeBps: m.edgeBps,
+      spread: m.spread,
+      side: baseKelly.side,
+      entryPrice: baseKelly.entryPrice,
+      winProb: baseKelly.winProb,
+      netEdgeAfterSpread: baseKelly.netEdgeAfterSpread,
+      evPer100Usd: baseKelly.evPer100Usd,
+      sameDomainCount,
+      correlationHaircut,
+      rawQuarterKellyPct: Number((baseKelly.quarterKellyFraction * 100).toFixed(2)),
+      adjustedFraction,
+    };
+  });
+
+  const sumAdjusted = rawLegs.reduce((acc, l) => acc + l.adjustedFraction, 0);
+  const scaleFactor = sumAdjusted > capPct && sumAdjusted > 0 ? capPct / sumAdjusted : 1.0;
+
+  let totalAllocatedUsd = 0;
+  let totalExpectedProfitUsd = 0;
+
+  const allocations = rawLegs.map((l) => {
+    const finalFraction = Number((l.adjustedFraction * scaleFactor).toFixed(4));
+    const stakeUsd = Math.round(bankroll * finalFraction * 100) / 100;
+    const expectedProfitUsd = Number(((stakeUsd * l.evPer100Usd) / 100).toFixed(2));
+    totalAllocatedUsd += stakeUsd;
+    totalExpectedProfitUsd += expectedProfitUsd;
+    return {
+      ...l,
+      finalAllocationPct: Number((finalFraction * 100).toFixed(2)),
+      stakeUsd,
+      expectedProfitUsd,
+    };
+  });
+
+  totalAllocatedUsd = Number(totalAllocatedUsd.toFixed(2));
+  totalExpectedProfitUsd = Number(totalExpectedProfitUsd.toFixed(2));
+  const reserveCashUsd = Number(Math.max(0, bankroll - totalAllocatedUsd).toFixed(2));
+
+  return {
+    bankrollUsd: bankroll,
+    legCount: allocations.length,
+    totalAllocatedUsd,
+    totalAllocatedPct: Number(((totalAllocatedUsd / bankroll) * 100).toFixed(2)),
+    reserveCashUsd,
+    reserveCashPct: Number(((reserveCashUsd / bankroll) * 100).toFixed(2)),
+    totalExpectedProfitUsd,
+    portfolioCapApplied: scaleFactor < 0.999,
+    allocations,
+  };
+}
+

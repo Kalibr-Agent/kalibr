@@ -22,52 +22,66 @@
     <!-- LEFT SWISS INSTRUMENT SPINE (NO GENERIC TOPBAR) -->
     <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
       <div class="spine-brand">
-        <a href="#board" class="brand-lockup" data-view-link="board">
-          <img src="/logo.png" alt="KALIBR Vernier Emblem" class="brand-mark" width="42" height="42" />
+        <a href="/" class="brand-lockup">
+          <img src="/logo.png" alt="KALIBR Emblem" class="brand-mark" width="42" height="42" />
           <div class="brand-copy">
             <span class="brand-word">KALIBR</span>
-            <span class="brand-sub">ACTUARIAL AI · CHAIN 4663</span>
+            <span class="brand-sub">PROBABILITY ATELIER</span>
           </div>
         </a>
         <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
       </div>
 
       <nav class="folio-nav" aria-label="Primary Folios">
-        <button type="button" class="folio-btn is-active" data-view-link="board">
+        <a href="/" class="folio-btn is-active" data-view-link="board">
           <span class="folio-idx">01</span>
           <span class="folio-meta">
             <strong>Mispricing Board</strong>
-            <small>Live Polymarket Edge</small>
+            <small>Live Polymarket Edge &amp; Bench</small>
           </span>
-        </button>
-        <button type="button" class="folio-btn" data-view-link="bench">
+        </a>
+        <a href="/arb" class="folio-btn">
           <span class="folio-idx">02</span>
           <span class="folio-meta">
-            <strong>Calibration Bench</strong>
-            <small>3-Agent Dossier &amp; Kelly</small>
+            <strong>NegRisk &amp; Sum-of-Odds <span class="folio-new-tag">NEW</span></strong>
+            <small>Dutch Books &amp; Overround</small>
           </span>
-        </button>
-        <button type="button" class="folio-btn" data-view-link="seals">
+        </a>
+        <a href="/traps" class="folio-btn">
           <span class="folio-idx">03</span>
           <span class="folio-meta">
-            <strong>Sealed Track Record</strong>
-            <small>Keccak-256 Proof &amp; Brier</small>
+            <strong>Resolution Trap Radar <span class="folio-new-tag">NEW</span></strong>
+            <small>Fine-Print &amp; UMA Audit</small>
           </span>
-        </button>
-        <button type="button" class="folio-btn" data-view-link="mcp">
+        </a>
+        <a href="/kelly" class="folio-btn">
           <span class="folio-idx">04</span>
           <span class="folio-meta">
-            <strong>Agent CLI &amp; MCP</strong>
-            <small>npx kalibr · HTTP MCP</small>
+            <strong>Kelly Slate Builder <span class="folio-new-tag">NEW</span></strong>
+            <small>Multi-Leg Correlation Sizer</small>
           </span>
-        </button>
+        </a>
+        <a href="/seals" class="folio-btn">
+          <span class="folio-idx">05</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Onchain Merkle Verifier</small>
+          </span>
+        </a>
+        <a href="/agents" class="folio-btn">
+          <span class="folio-idx">06</span>
+          <span class="folio-meta">
+            <strong>CLI, MCP &amp; $KALIBR</strong>
+            <small>Agent Tools &amp; Holder Tiers</small>
+          </span>
+        </a>
       </nav>
 
       <!-- BUILT-IN INSTRUMENT GAUGE -->
       <div class="spine-telemetry">
         <div class="telemetry-header">
           <span class="pulse-dot" id="chainPulseDot"></span>
-          <span id="chainPulseText">ROBINHOOD 4663 · LIVE</span>
+          <span id="chainPulseText">ONCHAIN TELEMETRY · LIVE</span>
         </div>
         <div class="telemetry-grid">
           <div class="tel-cell">
@@ -112,7 +126,7 @@
       <!-- CONTRACT & SOCIAL FOOTPLATE -->
       <div class="spine-footer">
         <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
-          <span class="ca-plate-lbl">TOKEN CONTRACT (4663)</span>
+          <span class="ca-plate-lbl">$KALIBR CONTRACT</span>
           <code id="caDisplay">$KALIBR: 0x002E44f3c1856a71acAF9FB3067e96a4348607c4</code>
         </button>
         <div class="spine-links">
@@ -209,6 +223,7 @@
             <h2 class="editorial-h1" id="benchHeadline">Contract Calibration Dossier</h2>
           </div>
           <div class="bench-actions">
+            <button type="button" class="btn-ghost" data-view-link="board">← Back to Board</button>
             <a href="https://polymarket.com" target="_blank" rel="noopener" class="btn-ghost" id="benchPolymarketLink">Open on Polymarket ↗</a>
             <button type="button" class="btn-ink" id="runAiPanelBtn">Dispatch 3-Agent AI Panel</button>
           </div>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resolution Fine-Print &amp; UMA Dispute Trap Radar — KALIBR</title>
+  <meta name="description" content="Audit Polymarket resolution specifications in under 1.2s before risking capital. Detect subjective UMA reporting clauses, announcement vs GA release traps, strict ET cutoffs, and single-venue candle rules." />
+  <meta property="og:title" content="KALIBR /traps — Polymarket Fine-Print &amp; Oracle Dispute Radar" />
+  <meta property="og:description" content="Paste any Polymarket URL or scan high-volume contracts for dangerous resolution clauses &amp; UMA ambiguity." />
+  <meta property="og:image" content="https://kalibragent.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kalibragent.com/og-image.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <div class="atelier-frame">
+    <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
+      <div class="spine-brand">
+        <a href="/" class="brand-lockup">
+          <img src="/logo.png" alt="KALIBR Emblem" class="brand-mark" width="42" height="42" />
+          <div class="brand-copy">
+            <span class="brand-word">KALIBR</span>
+            <span class="brand-sub">PROBABILITY ATELIER</span>
+          </div>
+        </a>
+        <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
+      </div>
+
+      <nav class="folio-nav" aria-label="Primary Folios">
+        <a href="/" class="folio-btn">
+          <span class="folio-idx">01</span>
+          <span class="folio-meta">
+            <strong>Mispricing Board</strong>
+            <small>Live Polymarket Edge &amp; Bench</small>
+          </span>
+        </a>
+        <a href="/arb" class="folio-btn">
+          <span class="folio-idx">02</span>
+          <span class="folio-meta">
+            <strong>NegRisk &amp; Sum-of-Odds <span class="folio-new-tag">NEW</span></strong>
+            <small>Dutch Books &amp; Overround</small>
+          </span>
+        </a>
+        <a href="/traps" class="folio-btn is-active">
+          <span class="folio-idx">03</span>
+          <span class="folio-meta">
+            <strong>Resolution Trap Radar <span class="folio-new-tag">NEW</span></strong>
+            <small>Fine-Print &amp; UMA Audit</small>
+          </span>
+        </a>
+        <a href="/kelly" class="folio-btn">
+          <span class="folio-idx">04</span>
+          <span class="folio-meta">
+            <strong>Kelly Slate Builder <span class="folio-new-tag">NEW</span></strong>
+            <small>Multi-Leg Correlation Sizer</small>
+          </span>
+        </a>
+        <a href="/seals" class="folio-btn">
+          <span class="folio-idx">05</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Onchain Merkle Verifier</small>
+          </span>
+        </a>
+        <a href="/agents" class="folio-btn">
+          <span class="folio-idx">06</span>
+          <span class="folio-meta">
+            <strong>CLI, MCP &amp; $KALIBR</strong>
+            <small>Agent Tools &amp; Holder Tiers</small>
+          </span>
+        </a>
+      </nav>
+
+      <div class="spine-telemetry">
+        <div class="telemetry-header">
+          <span class="pulse-dot" id="chainPulseDot"></span>
+          <span id="chainPulseText">ONCHAIN TELEMETRY · LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tel-cell">
+            <span class="tel-val" id="statMispriced">—</span>
+            <span class="tel-lbl">LIVE EDGES</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statSealedForecasts">—</span>
+            <span class="tel-lbl">SEALED ODDS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statEpochs">—</span>
+            <span class="tel-lbl">EPOCHS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statHeadBlock">—</span>
+            <span class="tel-lbl">HEAD BLOCK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spine-pass">
+        <div class="pass-top">
+          <span class="pass-kicker">0-WALLET ACCESS</span>
+          <span class="pass-badge" id="callerTierBadge">VISITOR</span>
+        </div>
+        <p class="pass-note">Zero signatures or approvals. Paste any public 0x address to check $KALIBR tier.</p>
+        <form id="walletCheckForm" class="pass-form">
+          <input type="text" id="walletInput" placeholder="0x… public address" autocomplete="off" spellcheck="false" />
+          <button type="submit">Verify</button>
+        </form>
+        <div class="pass-status" id="walletStatusLine">Unlimited &lt;1.2s scans · 15 AI panels/day</div>
+      </div>
+
+      <div class="spine-footer">
+        <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
+          <span class="ca-plate-lbl">$KALIBR CONTRACT</span>
+          <code id="caDisplay">$KALIBR: 0x002E44f3c1856a71acAF9FB3067e96a4348607c4</code>
+        </button>
+        <div class="spine-links">
+          <a href="https://x.com/kalibragent" target="_blank" rel="noopener">X / TWITTER ↗</a>
+          <a href="https://github.com/Kalibr-Agent/kalibr" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a href="/SKILL.md" target="_blank" rel="noopener">SKILL.MD ↗</a>
+          <a href="/llms.txt" target="_blank" rel="noopener">LLMS.TXT ↗</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="atelier-main">
+      <header class="instrument-bar">
+        <form id="trapAuditForm" class="omnibar-form">
+          <span class="omnibar-glyph" aria-hidden="true">§</span>
+          <input
+            type="text"
+            id="trapAuditInput"
+            placeholder="Paste any polymarket.com/event/… URL or contract question to audit fine-print traps in &lt;1.2s"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span class="omnibar-latency" id="trapLatency">&lt;1.2s</span>
+          <button type="submit" class="btn-ink" id="trapAuditBtn">Audit Contract Rules</button>
+        </form>
+      </header>
+
+      <section class="folio-view is-visible">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 03 · RESOLUTION SPECIFICATION &amp; UMA DISPUTE AUDIT</div>
+            <h1 class="editorial-h1">Never win the thesis and lose the resolution clause.</h1>
+          </div>
+        </div>
+
+        <div class="kpi-ribbon">
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">CONTRACTS AUDITED</span>
+            <span class="kpi-tile-val" id="kpiTrapsTotal">—</span>
+            <span class="kpi-tile-sub">Active non-sports books</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">HIGH DISPUTE / BOOK RISK</span>
+            <span class="kpi-tile-val neg" id="kpiTrapsHigh">—</span>
+            <span class="kpi-tile-sub">Severe fine-print or depth hazards</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">CAUTION CLAUSES FLAGGED</span>
+            <span class="kpi-tile-val amber" id="kpiTrapsMedium">—</span>
+            <span class="kpi-tile-sub">UMA consensus, GA vs beta, venue feed</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">CLEAN DETERMINISTIC</span>
+            <span class="kpi-tile-val pos" id="kpiTrapsClean">—</span>
+            <span class="kpi-tile-sub">Tight book &amp; unambiguous settlement</span>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="domain-pills" id="trapFilterRow">
+            <button type="button" class="dom-pill is-active" data-filter="all">All Audited Contracts</button>
+            <button type="button" class="dom-pill" data-filter="flagged">Flagged Clauses Only</button>
+            <button type="button" class="dom-pill" data-filter="high">High Dispute Risk</button>
+            <button type="button" class="dom-pill" data-filter="clean">Clean Deterministic</button>
+          </div>
+          <div class="sort-controls">
+            <button type="button" class="btn-ghost" id="refreshTrapsBtn">↻ Refresh Audit</button>
+          </div>
+        </div>
+
+        <div class="workbench-split">
+          <div class="market-cards-col" id="trapCardsList" aria-live="polite">
+            <div class="skeleton-card">Scanning live Polymarket contract specifications &amp; UMA clauses…</div>
+          </div>
+
+          <aside class="pinned-inspector" id="trapInspector" aria-label="Contract Fine-Print Audit">
+            <div class="inspector-empty">Select a contract to inspect verbatim dangerous clauses &amp; settlement rules.</div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/traps.js"></script>
+</body>
+</html>

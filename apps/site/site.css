@@ -135,7 +135,7 @@ html, body {
   appearance: none;
   border: 1px solid transparent;
   background: transparent;
-  padding: 9px 10px;
+  padding: 8px 10px;
   border-radius: 6px;
   display: flex;
   align-items: flex-start;
@@ -143,6 +143,8 @@ html, body {
   text-align: left;
   cursor: pointer;
   color: var(--ink-700);
+  text-decoration: none;
+  width: 100%;
   transition: background 0.14s ease, border-color 0.14s ease;
 }
 
@@ -1438,6 +1440,283 @@ html, body {
   border: 1px solid var(--jade-border);
 }
 
+/* MULTI-PAGE SWISS COMPONENTS: KPI RIBBON, NEGRISK ARB, TRAPS & KELLY SLATE */
+.folio-new-tag {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--jade-700);
+  background: var(--jade-bg);
+  border: 1px solid var(--jade-border);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.kpi-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 16px 0 18px;
+}
+
+.kpi-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 7px;
+  padding: 12px 14px;
+}
+
+.kpi-tile-lbl {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-500);
+  margin-bottom: 4px;
+}
+
+.kpi-tile-val {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-900);
+  line-height: 1.15;
+}
+
+.kpi-tile-val.pos { color: var(--jade-700); }
+.kpi-tile-val.neg { color: var(--verm-700); }
+.kpi-tile-val.amber { color: var(--amber-700); }
+.kpi-tile-val.cobalt { color: var(--cobalt-700); }
+
+.kpi-tile-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-500);
+  margin-top: 3px;
+}
+
+/* /ARB: 100% PARITY GAUGE & BRACKET TABLE */
+.verdict-stamp.v-info {
+  background: var(--cobalt-bg);
+  border: 1px solid #9cb6e8;
+  color: var(--cobalt-700);
+}
+
+.parity-box {
+  background: var(--bg-paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 10px 14px 9px;
+  margin-bottom: 10px;
+}
+
+.parity-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  margin-bottom: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.parity-track {
+  position: relative;
+  height: 16px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.parity-fill {
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+.parity-fill.pos { background: rgba(17, 128, 94, 0.25); border-right: 2.5px solid var(--jade-700); }
+.parity-fill.neg { background: rgba(214, 66, 47, 0.22); border-right: 2.5px solid var(--verm-700); }
+.parity-fill.info { background: rgba(31, 68, 140, 0.2); border-right: 2.5px solid var(--cobalt-700); }
+.parity-fill.flat { background: rgba(138, 135, 125, 0.22); border-right: 2px solid var(--ink-700); }
+
+.parity-100-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 76.92%; /* 100% on a 0..130% scale */
+  width: 2px;
+  background: var(--ink-900);
+  z-index: 3;
+}
+
+.parity-scale-nums {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-400);
+  margin-top: 4px;
+}
+
+.bracket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.bracket-table th {
+  text-align: left;
+  font-size: 9.5px;
+  color: var(--ink-500);
+  border-bottom: 1px solid var(--rule-strong);
+  padding: 5px 4px;
+}
+
+.bracket-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-900);
+}
+
+.bracket-table td.num, .bracket-table th.num {
+  text-align: right;
+}
+
+/* /KELLY: PORTFOLIO SLATE & CANDIDATE ADDERS */
+.slate-controls-card {
+  background: var(--bg-card);
+  border: 1px solid var(--ink-900);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr auto;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.preset-pills {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.preset-pill {
+  appearance: none;
+  border: 1px solid var(--rule-strong);
+  background: var(--bg-subtle);
+  color: var(--ink-700);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.preset-pill.is-active, .preset-pill:hover {
+  background: var(--ink-900);
+  border-color: var(--ink-900);
+  color: #fff;
+}
+
+.slate-leg-card {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slate-leg-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: var(--bg-paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+}
+
+.slate-leg-metrics div strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-900);
+}
+
+.slate-leg-metrics div span {
+  font-size: 9.5px;
+  color: var(--ink-500);
+}
+
+.haircut-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--amber-700);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* /AGENTS: TIER CARDS & BURN VERIFIER */
+.tier-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.tier-card-box {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tier-card-box.featured {
+  border: 1.5px solid var(--jade-700);
+  box-shadow: inset 0 3px 0 var(--jade-700);
+}
+
+.tier-card-box.syndicate {
+  border: 1.5px solid var(--ink-900);
+  box-shadow: inset 0 3px 0 var(--ink-900);
+}
+
+.tier-price-num {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.tier-ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: var(--ink-700);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1180px) {
   .workbench-split {
@@ -1447,7 +1726,7 @@ html, body {
     position: static;
     max-height: none;
   }
-  .three-agent-grid, .bench-top-grid, .seals-layout, .mcp-grid {
+  .three-agent-grid, .bench-top-grid, .seals-layout, .mcp-grid, .tier-cards-grid, .kpi-ribbon, .slate-controls-card {
     grid-template-columns: 1fr;
   }
 }

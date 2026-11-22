@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent CLI, Streamable HTTP MCP &amp; $KALIBR Holder Tiers — KALIBR</title>
+  <meta name="description" content="Connect Cursor, Claude Code &amp; Codex to KALIBR's 8-tool MCP server, run npx kalibr locally, and inspect 0-signature $KALIBR holder throughput tiers." />
+  <meta property="og:title" content="KALIBR /agents — CLI, HTTP MCP &amp; $KALIBR Access Tiers" />
+  <meta property="og:description" content="Zero-dependency CLI, 8-tool Streamable HTTP MCP server, and read-only $KALIBR holder access tiers." />
+  <meta property="og:image" content="https://kalibragent.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kalibragent.com/og-image.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <div class="atelier-frame">
+    <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
+      <div class="spine-brand">
+        <a href="/" class="brand-lockup">
+          <img src="/logo.png" alt="KALIBR Emblem" class="brand-mark" width="42" height="42" />
+          <div class="brand-copy">
+            <span class="brand-word">KALIBR</span>
+            <span class="brand-sub">PROBABILITY ATELIER</span>
+          </div>
+        </a>
+        <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
+      </div>
+
+      <nav class="folio-nav" aria-label="Primary Folios">
+        <a href="/" class="folio-btn">
+          <span class="folio-idx">01</span>
+          <span class="folio-meta">
+            <strong>Mispricing Board</strong>
+            <small>Live Polymarket Edge &amp; Bench</small>
+          </span>
+        </a>
+        <a href="/arb" class="folio-btn">
+          <span class="folio-idx">02</span>
+          <span class="folio-meta">
+            <strong>NegRisk &amp; Sum-of-Odds <span class="folio-new-tag">NEW</span></strong>
+            <small>Dutch Books &amp; Overround</small>
+          </span>
+        </a>
+        <a href="/traps" class="folio-btn">
+          <span class="folio-idx">03</span>
+          <span class="folio-meta">
+            <strong>Resolution Trap Radar <span class="folio-new-tag">NEW</span></strong>
+            <small>Fine-Print &amp; UMA Audit</small>
+          </span>
+        </a>
+        <a href="/kelly" class="folio-btn">
+          <span class="folio-idx">04</span>
+          <span class="folio-meta">
+            <strong>Kelly Slate Builder <span class="folio-new-tag">NEW</span></strong>
+            <small>Multi-Leg Correlation Sizer</small>
+          </span>
+        </a>
+        <a href="/seals" class="folio-btn">
+          <span class="folio-idx">05</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Onchain Merkle Verifier</small>
+          </span>
+        </a>
+        <a href="/agents" class="folio-btn is-active">
+          <span class="folio-idx">06</span>
+          <span class="folio-meta">
+            <strong>CLI, MCP &amp; $KALIBR</strong>
+            <small>Agent Tools &amp; Holder Tiers</small>
+          </span>
+        </a>
+      </nav>
+
+      <div class="spine-telemetry">
+        <div class="telemetry-header">
+          <span class="pulse-dot" id="chainPulseDot"></span>
+          <span id="chainPulseText">ONCHAIN TELEMETRY · LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tel-cell">
+            <span class="tel-val" id="statMispriced">—</span>
+            <span class="tel-lbl">LIVE EDGES</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statSealedForecasts">—</span>
+            <span class="tel-lbl">SEALED ODDS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statEpochs">—</span>
+            <span class="tel-lbl">EPOCHS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statHeadBlock">—</span>
+            <span class="tel-lbl">HEAD BLOCK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spine-pass">
+        <div class="pass-top">
+          <span class="pass-kicker">0-WALLET ACCESS</span>
+          <span class="pass-badge" id="callerTierBadge">VISITOR</span>
+        </div>
+        <p class="pass-note">Zero signatures or approvals. Paste any public 0x address to check $KALIBR tier.</p>
+        <form id="walletCheckForm" class="pass-form">
+          <input type="text" id="walletInput" placeholder="0x… public address" autocomplete="off" spellcheck="false" />
+          <button type="submit">Verify</button>
+        </form>
+        <div class="pass-status" id="walletStatusLine">Unlimited &lt;1.2s scans · 15 AI panels/day</div>
+      </div>
+
+      <div class="spine-footer">
+        <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
+          <span class="ca-plate-lbl">$KALIBR CONTRACT</span>
+          <code id="caDisplay">$KALIBR: 0x002E44f3c1856a71acAF9FB3067e96a4348607c4</code>
+        </button>
+        <div class="spine-links">
+          <a href="https://x.com/kalibragent" target="_blank" rel="noopener">X / TWITTER ↗</a>
+          <a href="https://github.com/Kalibr-Agent/kalibr" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a href="/SKILL.md" target="_blank" rel="noopener">SKILL.MD ↗</a>
+          <a href="/llms.txt" target="_blank" rel="noopener">LLMS.TXT ↗</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="atelier-main">
+      <section class="folio-view is-visible">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 06 · AGENT CLI, 8-TOOL HTTP MCP &amp; $KALIBR TIERS</div>
+            <h1 class="editorial-h1">Plug probability calibration into Cursor, Claude &amp; autonomous loops.</h1>
+          </div>
+          <div>
+            <a href="https://ponsfamily.com/launchpad/0x002E44f3c1856a71acAF9FB3067e96a4348607c4" target="_blank" rel="noopener" class="btn-ink">$KALIBR on Pons ↗</a>
+          </div>
+        </div>
+
+        <div class="tier-cards-grid">
+          <div class="tier-card-box">
+            <div class="card-kicker">TIER 0 · OPEN ACCESS</div>
+            <h3 style="margin:0;font-family:var(--font-serif);">Visitor</h3>
+            <div class="tier-price-num">0 <span style="font-size:13px;color:var(--ink-500);">$KALIBR</span></div>
+            <ul class="tier-ul">
+              <li>Unlimited &lt;1.2s Edge, NegRisk &amp; Trap Scans</li>
+              <li>15 Live 3-Agent AI Panels / day</li>
+              <li>300 HTTP / stdio MCP calls / day</li>
+              <li>In-browser Keccak-256 Merkle Verifier</li>
+            </ul>
+          </div>
+
+          <div class="tier-card-box featured">
+            <div class="card-kicker" style="color:var(--jade-700);">TIER 1 · SOLO TRADER</div>
+            <h3 style="margin:0;font-family:var(--font-serif);">Forecaster</h3>
+            <div class="tier-price-num" style="color:var(--jade-700);">1,000,000 <span style="font-size:13px;color:var(--ink-500);">$KALIBR (0.1%)</span></div>
+            <ul class="tier-ul">
+              <li><strong>60 Live 3-Agent AI Panels / day</strong></li>
+              <li><strong>5,000 MCP Tool Calls / day</strong></li>
+              <li>Deep Chief Superforecaster Q&amp;A</li>
+              <li>Read-only <code>balanceOf</code> — zero signatures</li>
+            </ul>
+          </div>
+
+          <div class="tier-card-box syndicate">
+            <div class="card-kicker" style="color:var(--ink-900);">TIER 2 · AUTONOMOUS DESK</div>
+            <h3 style="margin:0;font-family:var(--font-serif);">Syndicate</h3>
+            <div class="tier-price-num">5,000,000 <span style="font-size:13px;color:var(--ink-500);">$KALIBR (0.5%)</span></div>
+            <ul class="tier-ul">
+              <li><strong>250 Live 3-Agent AI Panels / day</strong></li>
+              <li><strong>50,000 MCP Tool Calls / day</strong></li>
+              <li>24/7 Cursor, Claude &amp; Codex cron loops</li>
+              <li>Or unlock 7 days via <strong>100,000 $KALIBR burn</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="swiss-card" style="margin-bottom:18px;">
+          <div class="card-kicker">NON-CUSTODIAL 100,000 $KALIBR BURN PASS VERIFIER (7-DAY SYNDICATE UNLOCK)</div>
+          <h3>Verify Onchain Native Burn Receipt</h3>
+          <p class="card-p">Paste any transaction hash that burned ≥100,000 $KALIBR via native <code>ERC20.burn()</code> (to <code>0x000…0000</code>) or <code>0x000…dEaD</code>. Verified directly from onchain receipt logs with zero wallet popups.</p>
+          <form id="burnVerifyForm" class="ask-chief-bar">
+            <input type="text" id="burnTxInput" placeholder="0x… burn transaction hash" autocomplete="off" spellcheck="false" />
+            <button type="submit" class="btn-ink" id="burnVerifyBtn">Verify Burn Receipt</button>
+          </form>
+          <div id="burnVerifyResult" style="margin-top:10px;font-family:var(--font-mono);font-size:12px;"></div>
+        </div>
+
+        <div class="mcp-grid">
+          <div class="swiss-card">
+            <div class="card-kicker">ZERO-DEPENDENCY CLI + STDIO MCP</div>
+            <h3>One-Command Local Setup</h3>
+            <p class="card-p">Runs on Node.js 20+ with zero external npm dependencies and zero wallet prompts.</p>
+            <pre class="code-slab" id="cliInstallSnippet"><code>npx github:Kalibr-Agent/kalibr scan "https://polymarket.com/event/fed-decision-in-december"
+npx github:Kalibr-Agent/kalibr radar --domain macro
+npx github:Kalibr-Agent/kalibr init</code></pre>
+            <button type="button" class="btn-ghost copy-snippet-btn" data-copy-target="cliInstallSnippet">Copy CLI Commands</button>
+          </div>
+
+          <div class="swiss-card">
+            <div class="card-kicker">8-TOOL STREAMABLE HTTP MCP (JSON-RPC 2.0)</div>
+            <h3>Remote MCP Server</h3>
+            <p class="card-p">Includes <code>scan_polymarket_edge</code>, <code>list_mispriced_radar</code>, <code>list_negrisk_arb</code>, <code>scan_resolution_traps</code>, <code>run_ai_3agent_calibration</code>, and Merkle proof tools.</p>
+            <pre class="code-slab" id="mcpJsonSnippet"><code id="mcpConfigCode">{
+  "mcpServers": {
+    "kalibr": {
+      "url": "https://kalibragent.com/mcp"
+    }
+  }
+}</code></pre>
+            <button type="button" class="btn-ghost copy-snippet-btn" data-copy-target="mcpJsonSnippet">Copy MCP Config</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/agents.js"></script>
+</body>
+</html>

@@ -88,6 +88,40 @@ export async function runCli(argv, io = { log: console.log }) {
     return;
   }
 
+  if (cmd === "arb") {
+    const mode = String(flags.mode || "all");
+    const limit = Number(flags.limit || 12);
+    const books = await core.fetchNegRiskArbRadar({ mode, limit });
+    if (flags.json) {
+      io.log(JSON.stringify(books, null, 2));
+      return;
+    }
+    io.log(`\nKALIBR NEGRISK & SUM-OF-ODDS SCANNER (${mode.toUpperCase()} · ${books.length} BOOKS)\n`);
+    for (const b of books) {
+      io.log(
+        `[${b.arbVerdict.padEnd(20)}] Mid ${(b.sumMidProb * 100).toFixed(1).padStart(6)}% | Ask ${(b.sumBestAsk * 100).toFixed(1).padStart(6)}¢ | Bid ${(b.sumBestBid * 100).toFixed(1).padStart(6)}¢ | ${b.eventTitle.slice(0, 56)}`
+      );
+    }
+    return;
+  }
+
+  if (cmd === "traps") {
+    const domain = String(flags.domain || "all");
+    const limit = Number(flags.limit || 12);
+    const contracts = await core.fetchResolutionTrapRadar({ domainFilter: domain, limit });
+    if (flags.json) {
+      io.log(JSON.stringify(contracts, null, 2));
+      return;
+    }
+    io.log(`\nKALIBR RESOLUTION FINE-PRINT & UMA TRAP RADAR (${contracts.length} CONTRACTS)\n`);
+    for (const c of contracts) {
+      io.log(
+        `[${c.trapVerdict.padEnd(18)} ${String(c.trapRiskScore).padStart(2)}/100] ${c.trapCount} flags | ${c.question.slice(0, 64)}`
+      );
+    }
+    return;
+  }
+
   if (cmd === "verify") {
     const registry = String(flags.registry || "");
     const epoch = Number(positional[1] || flags.epoch || 0);
@@ -124,11 +158,13 @@ export async function runCli(argv, io = { log: console.log }) {
     return;
   }
 
-  io.log(`KALIBR v0.1.0 — Autonomous AI Probability Calibration & Polymarket Edge CLI
+  io.log(`KALIBR v0.2.0 — Autonomous AI Probability Calibration & Polymarket Edge CLI
 
 Commands:
   kalibr scan "<url-or-question>" [--bankroll 1000] [--json]
   kalibr radar [--domain all|macro|ai|geopolitics|crypto|policy] [--limit 10]
+  kalibr arb [--mode all|closed|open] [--limit 12]
+  kalibr traps [--domain all|macro|ai|geopolitics|crypto|policy] [--limit 12]
   kalibr init [--dry-run]
   kalibr doctor
   kalibr verify <epochHour> --registry <0xAddress>

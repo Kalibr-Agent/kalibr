@@ -1,5 +1,8 @@
 import {
   fetchCuratedPolymarketRadar,
+  fetchNegRiskArbRadar,
+  fetchResolutionTrapRadar,
+  scoreContractTrapRisk,
   resolveAndCalibratePolymarket,
   computeKellySizing,
   computeBrierScore,
@@ -297,6 +300,45 @@ async function getRadarWithCache(env, { domain = "all", limit = 18, forceRefresh
   return markets.slice(0, limit);
 }
 
+async function getNegRiskArbWithCache(env, { mode = "all", limit = 24, forceRefresh = false } = {}) {
+  const cacheKey = `arb:${mode}`;
+  const nowSec = Math.floor(Date.now() / 1000);
+  if (!forceRefresh && env.DB) {
+    const cached = await env.DB.prepare("SELECT payload_json, updated_at FROM radar_cache WHERE cache_key = ?")
+      .bind(cacheKey)
+      .first();
+    if (cached && nowSec - Number(cached.updated_at) <= 45) {
+      try {
+        const parsed = JSON.parse(cached.payload_json);
+        if (Array.isArray(parsed)) return parsed.slice(0, limit);
+      } catch {
+        // Re-fetch below
+      }
+    }
+  }
+  const books = await fetchNegRiskArbRadar({ limit: Math.max(limit, 24), mode });
+  if (env.DB && books.length > 0) {
+    await env.DB.prepare(
+      `INSERT INTO radar_cache (cache_key, payload_json, updated_at)
+       VALUES (?, ?, ?)
+       ON CONFLICT(cache_key) DO UPDATE SET payload_json = excluded.payload_json, updated_at = excluded.updated_at`
+    )
+      .bind(cacheKey, JSON.stringify(books), nowSec)
+      .run();
+  }
+  return books.slice(0, limit);
+}
+
+async function getTrapRadarWithCache(env, { domain = "all", limit = 24, forceRefresh = false } = {}) {
+  const markets = await getRadarWithCache(env, { domain, limit: Math.max(limit, 30), forceRefresh });
+  const enriched = markets.map((m) => ({ ...m, ...scoreContractTrapRisk(m) }));
+  enriched.sort((a, b) => {
+    if (b.trapRiskScore !== a.trapRiskScore) return b.trapRiskScore - a.trapRiskScore;
+    return b.volume24hUsd - a.volume24hUsd;
+  });
+  return enriched.slice(0, limit);
+}
+
 async function refreshResolvedOutcomes(env) {
   if (!env.DB) return 0;
   const { results } = await env.DB.prepare(
@@ -554,6 +596,30 @@ const MCP_TOOLS = [
       "Retrieve KALIBR's pre-resolution Brier Score accuracy vs Polymarket crowd baseline across resolved sealed forecasts.",
     inputSchema: { type: "object", properties: {} },
   },
+  {
+    name: "list_negrisk_arb",
+    description:
+      "Scan live Polymarket multi-outcome NegRisk orderbooks for sum-of-odds parity anomalies: executable Dutch-book ask baskets (sumAsk < $1.00), Mint-set bid arbs (sumBid > $1.00), retail overround vigorish, and open-field unlisted candidate odds.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: { type: "string", enum: ["all", "closed", "open"], description: "Filter by closed partition vs augmented open field" },
+        limit: { type: "number", description: "Max events to return (1-25)" },
+      },
+    },
+  },
+  {
+    name: "scan_resolution_traps",
+    description:
+      "Rank live high-volume Polymarket world events by fine-print resolution dispute risk (UMA subjective reporting clauses, announcement vs GA shipment rules, strict timezone cutoffs, single-venue candle rules, and wide CLOB spreads).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        domain: { type: "string", enum: ["all", "macro", "ai", "geopolitics", "crypto", "policy"] },
+        limit: { type: "number", description: "Max contracts to return (1-25)" },
+      },
+    },
+  },
 ];
 
 async function handleMcpRequest(req, env) {
@@ -661,6 +727,12 @@ async function handleMcpRequest(req, env) {
         out = { verified, merkleRoot: ep.merkle_root, txHash: ep.tx_hash, leafHash: row.leaf_hash, canonicalLeaf: row.canonical_leaf, proof };
       } else if (toolName === "get_brier_track_record") {
         out = await getBrierSummary(env);
+      } else if (toolName === "list_negrisk_arb") {
+        const limit = Math.min(25, Math.max(1, Number(args.limit || 14)));
+        out = { books: await getNegRiskArbWithCache(env, { mode: args.mode || "all", limit }) };
+      } else if (toolName === "scan_resolution_traps") {
+        const limit = Math.min(25, Math.max(1, Number(args.limit || 14)));
+        out = { contracts: await getTrapRadarWithCache(env, { domain: args.domain || "all", limit }) };
       } else {
         return json({ jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown tool: ${toolName}` } }, 404);
       }
@@ -716,6 +788,8 @@ npx github:Kalibr-Agent/kalibr init
 ## Tools
 - \`scan_polymarket_edge({ query })\` — <1.2s actuarial edge, Quarter-Kelly stake, multi-bracket coherence & fine-print rule traps.
 - \`list_mispriced_radar({ domain?, limit? })\` — live non-sports world events ranked by crowd vs fair-value divergence.
+- \`list_negrisk_arb({ mode?, limit? })\` — multi-outcome NegRisk sum-of-odds parity scanner (Dutch-book ask baskets, Mint-set bid arbs, overround vigorish & unlisted field odds).
+- \`scan_resolution_traps({ domain?, limit? })\` — live fine-print & UMA oracle dispute trap radar across high-volume Polymarket contracts.
 - \`run_ai_3agent_calibration({ query, wallet? })\` — 3-agent LLM calibration (Base-Rate Analyst, Resolution Trap Devil, Chief Superforecaster) with verbatim JSON verification.
 - \`list_sealed_epochs({ limit? })\` / \`verify_forecast_seal({ epochHour, marketId })\` — verify pre-resolution Keccak-256 Merkle seals on Robinhood Chain (4663).
 `;
@@ -742,7 +816,7 @@ export default {
       if (pathname === "/llms.txt") {
         const siteUrl = (env.SITE_URL || "https://kalibragent.com").replace(/\/+$/, "");
         return textResp(
-          `# KALIBR\n> Autonomous AI probability calibration & Polymarket mispricing atelier.\n\n- Web Atelier: ${siteUrl}\n- GitHub Repository: https://github.com/Kalibr-Agent/kalibr\n- Streamable HTTP MCP: ${siteUrl}/mcp\n- Agent Skill: ${siteUrl}/SKILL.md\n- API Status: ${siteUrl}/v1/status\n- Live Mispricing Radar: ${siteUrl}/v1/radar\n- Sealed Epochs: ${siteUrl}/v1/seals\n`
+          `# KALIBR\n> Autonomous AI probability calibration & Polymarket mispricing atelier.\n\n- Mispricing Board: ${siteUrl}/\n- NegRisk & Sum-of-Odds Scanner: ${siteUrl}/arb\n- Resolution Trap Radar: ${siteUrl}/traps\n- Multi-Leg Kelly Slate Builder: ${siteUrl}/kelly\n- Onchain Merkle Seals: ${siteUrl}/seals\n- Agent CLI, MCP & $KALIBR Tiers: ${siteUrl}/agents\n- GitHub Repository: https://github.com/Kalibr-Agent/kalibr\n- Streamable HTTP MCP: ${siteUrl}/mcp\n- Agent Skill: ${siteUrl}/SKILL.md\n- API Status: ${siteUrl}/v1/status\n- Live Mispricing Radar: ${siteUrl}/v1/radar\n- Live NegRisk Arb Radar: ${siteUrl}/v1/arb\n- Live Resolution Trap Radar: ${siteUrl}/v1/traps\n- Sealed Epochs: ${siteUrl}/v1/seals\n`
         );
       }
 
@@ -825,6 +899,35 @@ export default {
           count: markets.length,
           mispricedCount: markets.filter((m) => m.verdictCode.startsWith("MISPRICED")).length,
           markets,
+        });
+      }
+
+      if (pathname === "/v1/arb" && req.method === "GET") {
+        const mode = url.searchParams.get("mode") || "all";
+        const limit = Math.min(30, Math.max(1, Number(url.searchParams.get("limit") || 20)));
+        const forceRefresh = url.searchParams.get("refresh") === "1";
+        const books = await getNegRiskArbWithCache(env, { mode, limit, forceRefresh });
+        return json({
+          ok: true,
+          mode,
+          count: books.length,
+          actionableCount: books.filter((b) => b.arbVerdict !== "TIGHT_COHERENT").length,
+          books,
+        });
+      }
+
+      if (pathname === "/v1/traps" && req.method === "GET") {
+        const domain = url.searchParams.get("domain") || "all";
+        const limit = Math.min(30, Math.max(1, Number(url.searchParams.get("limit") || 22)));
+        const forceRefresh = url.searchParams.get("refresh") === "1";
+        const contracts = await getTrapRadarWithCache(env, { domain, limit, forceRefresh });
+        return json({
+          ok: true,
+          domain,
+          count: contracts.length,
+          highRiskCount: contracts.filter((c) => c.trapVerdict === "HIGH_DISPUTE_RISK").length,
+          flaggedCount: contracts.filter((c) => (c.ruleTraps || []).length > 0).length,
+          contracts,
         });
       }
 

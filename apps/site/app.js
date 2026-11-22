@@ -266,7 +266,8 @@ function renderPinnedInspector() {
     </div>
 
     <div class="insp-cta-row">
-      <button type="button" class="btn-ink" id="openFullBenchBtn">Open 3-Agent Bench →</button>
+      <button type="button" class="btn-ink" id="openFullBenchBtn">3-Agent Bench →</button>
+      <button type="button" class="btn-ghost" id="addToSlateBtn">+ Kelly Slate</button>
       <a href="${esc(m.polymarketUrl)}" target="_blank" rel="noopener" class="btn-ghost">Polymarket ↗</a>
     </div>
   `;
@@ -283,6 +284,20 @@ function renderPinnedInspector() {
   const benchBtn = document.getElementById("openFullBenchBtn");
   if (benchBtn) {
     benchBtn.addEventListener("click", () => switchView("bench"));
+  }
+
+  const slateBtn = document.getElementById("addToSlateBtn");
+  if (slateBtn) {
+    slateBtn.addEventListener("click", () => {
+      try {
+        const cur = JSON.parse(localStorage.getItem("kalibr_slate_slugs") || "[]");
+        const arr = Array.isArray(cur) ? cur : [];
+        if (m.eventSlug && !arr.includes(m.eventSlug)) {
+          localStorage.setItem("kalibr_slate_slugs", JSON.stringify([m.eventSlug, ...arr].slice(0, 8)));
+        }
+      } catch {}
+      window.location.href = "/kelly";
+    });
   }
 }
 
@@ -629,8 +644,8 @@ Match Verdict      : ${matches ? "EXACT_MATCH (TRUE)" : "MISMATCH (FALSE)"}</cod
 
 function switchView(viewName) {
   state.view = viewName;
-  document.querySelectorAll(".folio-btn").forEach((b) => {
-    b.classList.toggle("is-active", b.getAttribute("data-view-link") === viewName);
+  document.querySelectorAll(".folio-btn[data-view-link]").forEach((b) => {
+    b.classList.toggle("is-active", viewName === "board" || viewName === "bench");
   });
   document.querySelectorAll(".folio-view").forEach((sec) => {
     sec.classList.toggle("is-visible", sec.id === `view-${viewName}`);
@@ -840,4 +855,13 @@ function bindEvents() {
 }
 
 bindEvents();
-Promise.all([loadStatus(), loadRadar()]);
+Promise.all([loadStatus(), loadRadar()]).then(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get("q");
+  const targetView = params.get("view");
+  if (q) {
+    document.getElementById("omnibarInput").value = q;
+    await runOmnibarInspect(q);
+    if (targetView === "bench") switchView("bench");
+  }
+});

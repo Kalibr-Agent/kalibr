@@ -8,6 +8,9 @@ import {
   parsePolymarketQuery,
   calibrateMarket,
   computeKellySizing,
+  analyzeNegRiskEvent,
+  scoreContractTrapRisk,
+  computePortfolioKellySlate,
   verifyVerbatimFigures,
   computeBrierScore,
 } from "../src/index.js";
@@ -129,4 +132,48 @@ test("Polymarket URL parser, actuarial calibrator, rule traps, and verbatim veri
   ]);
   assert.ok(brier.kalibrBrier < brier.crowdBrier);
   assert.ok(brier.skillImprovementPct > 50);
+});
+
+test("NegRisk parity analyzer, trap scorer, and multi-leg correlation Kelly slate work deterministically", () => {
+  const closedNegRisk = {
+    id: "ev-fed",
+    slug: "fed-december-rates",
+    title: "Fed December Rate Decision",
+    negRisk: true,
+    negRiskAugmented: false,
+    volume24hr: 950000,
+    liquidity: 420000,
+    tags: [{ slug: "macro", label: "Macro" }],
+    markets: [
+      { id: "m1", groupItemTitle: "25 bps cut", outcomes: '["Yes","No"]', outcomePrices: '["0.62","0.38"]', bestBid: 0.61, bestAsk: 0.62 },
+      { id: "m2", groupItemTitle: "No change", outcomes: '["Yes","No"]', outcomePrices: '["0.31","0.69"]', bestBid: 0.30, bestAsk: 0.31 },
+      { id: "m3", groupItemTitle: "50 bps cut", outcomes: '["Yes","No"]', outcomePrices: '["0.06","0.94"]', bestBid: 0.05, bestAsk: 0.06 },
+    ],
+  };
+
+  const arb = analyzeNegRiskEvent(closedNegRisk);
+  assert.ok(arb);
+  assert.equal(arb.partitionType, "CLOSED_PARTITION");
+  assert.equal(arb.arbVerdict, "DUTCH_BOOK_ASK_ARB");
+  assert.ok(arb.dutchBookAskEdgeBps > 0);
+
+  const slate = computePortfolioKellySlate(
+    [
+      { marketId: "1", eventSlug: "fed-1", question: "Fed Cut?", polymarketUrl: "https://polymarket.com", domain: { id: "macro", label: "Macro" }, crowdProb: 0.50, fairProb: 0.64, edgeBps: 1400, spread: 0.01 },
+      { marketId: "2", eventSlug: "cpi-2", question: "CPI < 2.6%?", polymarketUrl: "https://polymarket.com", domain: { id: "macro", label: "Macro" }, crowdProb: 0.45, fairProb: 0.58, edgeBps: 1300, spread: 0.01 },
+    ],
+    { bankrollUsd: 4000, maxTotalAllocationPct: 0.55 }
+  );
+  assert.equal(slate.legCount, 2);
+  assert.ok(slate.allocations[0].correlationHaircut < 1.0, "Same-domain legs receive 1/sqrt(k) correlation haircut");
+  assert.ok(slate.totalAllocatedUsd > 0 && slate.totalAllocatedUsd <= 2200);
+
+  const trapInfo = scoreContractTrapRisk({
+    ruleTraps: [
+      { code: "THIN_ORDERBOOK_DEPTH", severity: "HIGH" },
+      { code: "SUBJECTIVE_UMA_CONSENSUS", severity: "MEDIUM" },
+    ],
+  });
+  assert.equal(trapInfo.trapVerdict, "HIGH_DISPUTE_RISK");
+  assert.ok(trapInfo.trapRiskScore >= 50);
 });

@@ -30,14 +30,32 @@ if (!fs.existsSync(artifactPath)) {
   else pass("Zero Custody ABI", "ForecastSealRegistry.sol has 0 payable/approve/transferFrom functions");
 }
 
-// 2. Site HTML/JS hygiene: zero bare github.com, zero fake buyback promises, zero Connect Wallet popups
-const html = fs.readFileSync(path.join(ROOT, "apps/site/index.html"), "utf8");
-const js = fs.readFileSync(path.join(ROOT, "apps/site/app.js"), "utf8");
+// 2. Multi-page HTML/JS hygiene: zero bare github.com, zero fake buyback promises, zero Connect Wallet popups
+const htmlFiles = [
+  "apps/site/index.html",
+  "apps/site/arb/index.html",
+  "apps/site/traps/index.html",
+  "apps/site/kelly/index.html",
+  "apps/site/seals/index.html",
+  "apps/site/agents/index.html",
+];
+const jsFiles = [
+  "apps/site/app.js",
+  "apps/site/spine.js",
+  "apps/site/arb.js",
+  "apps/site/traps.js",
+  "apps/site/kelly.js",
+  "apps/site/seals.js",
+  "apps/site/agents.js",
+];
+
+const html = htmlFiles.map((f) => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
+const js = jsFiles.map((f) => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
 
 if (/href=["']https?:\/\/github\.com\/?["']/i.test(html)) {
-  fail("No Bare GitHub Link", "Found bare https://github.com link in index.html");
+  fail("No Bare GitHub Link", "Found bare https://github.com link in multi-page HTML");
 } else {
-  pass("No Bare GitHub Link", "Zero dead bare github.com links in index.html");
+  pass("No Bare GitHub Link", `Zero dead bare github.com links across ${htmlFiles.length} pages`);
 }
 
 if (/eth_requestAccounts/i.test(js) || /connect\s+wallet/i.test(html)) {

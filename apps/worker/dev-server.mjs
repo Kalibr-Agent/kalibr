@@ -37,7 +37,10 @@ const env = {
       const u = new URL(req.url);
       let rel = decodeURIComponent(u.pathname);
       if (rel === "/") rel = "/index.html";
-      const filePath = path.resolve(SITE_DIR, "." + rel);
+      let filePath = path.resolve(SITE_DIR, "." + rel);
+      if (filePath.startsWith(SITE_DIR) && fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, "index.html");
+      }
       if (!filePath.startsWith(SITE_DIR) || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
         const indexFallback = path.join(SITE_DIR, "index.html");
         if (fs.existsSync(indexFallback)) {
