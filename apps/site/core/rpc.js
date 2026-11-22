@@ -15,6 +15,7 @@ const SEL_BALANCE_OF = functionSelector("balanceOf(address)");
 const SEL_GET_SEAL = functionSelector("getSeal(uint64)");
 const SEL_LATEST_EPOCH = functionSelector("latestEpoch()");
 const SEL_TOTAL_EPOCHS = functionSelector("totalEpochsSealed()");
+const SEL_TOTAL_FORECASTS = functionSelector("totalForecastsSealed()");
 
 export function isValidEvmAddress(addr) {
   return typeof addr === "string" && /^0x[0-9a-fA-F]{40}$/.test(addr.trim());
@@ -102,17 +103,19 @@ export async function readOnchainEpochSeal(registryAddress, epochHour, opts = {}
 
 export async function readRegistryStats(registryAddress, opts = {}) {
   if (!isValidEvmAddress(registryAddress)) {
-    return { configured: false, latestEpoch: 0, totalEpochsSealed: 0 };
+    return { configured: false, latestEpoch: 0, totalEpochsSealed: 0, totalForecastsSealed: 0 };
   }
-  const [latestHex, totalHex] = await Promise.all([
+  const [latestHex, totalHex, forecastsHex] = await Promise.all([
     rpcCall("eth_call", [{ to: registryAddress, data: SEL_LATEST_EPOCH }, "latest"], opts),
     rpcCall("eth_call", [{ to: registryAddress, data: SEL_TOTAL_EPOCHS }, "latest"], opts),
+    rpcCall("eth_call", [{ to: registryAddress, data: SEL_TOTAL_FORECASTS }, "latest"], opts),
   ]);
   return {
     configured: true,
     registryAddress,
     latestEpoch: latestHex && latestHex !== "0x" ? Number(BigInt(latestHex)) : 0,
     totalEpochsSealed: totalHex && totalHex !== "0x" ? Number(BigInt(totalHex)) : 0,
+    totalForecastsSealed: forecastsHex && forecastsHex !== "0x" ? Number(BigInt(forecastsHex)) : 0,
   };
 }
 

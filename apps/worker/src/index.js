@@ -758,6 +758,7 @@ export default {
               registryAddress: env.SEAL_REGISTRY_ADDRESS || null,
               latestEpoch: 0,
               totalEpochsSealed: 0,
+              totalForecastsSealed: 0,
             })),
             resolveCallerAccess(env, walletParam),
             getBrierSummary(env),
@@ -779,8 +780,14 @@ export default {
             model: getActiveModelName(env) || "actuarial-v1 (set OPENAI_API_KEY for 3-agent LLM)",
           },
           stats: {
-            sealedEpochs: Number(epochCountRow?.c || 0),
-            sealedForecasts: Number(forecastCountRow?.c || 0),
+            sealedEpochs: registryStats.configured
+              ? Number(registryStats.totalEpochsSealed || 0)
+              : Number(epochCountRow?.c || 0),
+            sealedForecasts: registryStats.configured
+              ? Number(registryStats.totalForecastsSealed || 0)
+              : Number(forecastCountRow?.c || 0),
+            d1Epochs: Number(epochCountRow?.c || 0),
+            d1Forecasts: Number(forecastCountRow?.c || 0),
             aiDossiers: Number(dossierCountRow?.c || 0),
             brier,
           },

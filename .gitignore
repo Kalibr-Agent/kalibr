@@ -14,6 +14,10 @@ brand/candidates/
 brand/small48.png
 brand/warmup-*.png
 brand/warmup-*.svg
+brand/demo-live.mp4
+brand/demo-preview-*.jpg
+scripts/record-live-demo.mjs
+scripts/seal-onchain-epochs.mjs
 scripts/deploy-cloudflare.mjs
 scripts/make-vector-candidates.mjs
 scripts/build-brand.mjs

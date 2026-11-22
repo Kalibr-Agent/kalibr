@@ -521,8 +521,8 @@ function renderEpochsList() {
           <div class="epoch-root">Root: ${esc(ep.merkle_root)}</div>
           ${
             ep.tx_hash
-              ? `<div style="margin-top:4px;font-family:var(--font-mono);font-size:10px;"><a href="https://robinhoodchain.blockscout.com/tx/${esc(ep.tx_hash)}" target="_blank" rel="noopener" style="color:var(--jade-700);">Blockscout Tx ↗</a></div>`
-              : ""
+              ? `<div style="margin-top:4px;font-family:var(--font-mono);font-size:10px;"><a href="https://robinhoodchain.blockscout.com/tx/${esc(ep.tx_hash)}" target="_blank" rel="noopener" style="color:var(--jade-700);">✓ ONCHAIN SEALED · Blockscout Tx ↗</a></div>`
+              : `<div style="margin-top:4px;font-family:var(--font-mono);font-size:10px;color:var(--ink-400);">D1 SNAPSHOT (AWAITING ONCHAIN SEAL)</div>`
           }
         </div>
       `;
