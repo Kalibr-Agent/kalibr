@@ -11,6 +11,7 @@ import {
   analyzeNegRiskEvent,
   scoreContractTrapRisk,
   computePortfolioKellySlate,
+  computeCrossVenuePair,
   verifyVerbatimFigures,
   computeBrierScore,
 } from "../src/index.js";
@@ -176,4 +177,37 @@ test("NegRisk parity analyzer, trap scorer, and multi-leg correlation Kelly slat
   });
   assert.equal(trapInfo.trapVerdict, "HIGH_DISPUTE_RISK");
   assert.ok(trapInfo.trapRiskScore >= 50);
+
+  const exactArb = computeCrossVenuePair({
+    pairId: "gop-nom-2028",
+    eventTitle: "2028 Republican Nominee",
+    outcomeLabel: "Marco Rubio",
+    domain: { id: "policy", label: "Policy" },
+    ruleAlignment: "EXACT_PARITY",
+    kalshiTicker: "KXPRESNOMR-28-MRUB",
+    kalshiEventTicker: "KXPRESNOMR-28",
+    polymarketSlug: "republican-presidential-nominee-2028",
+    polyYesBid: 0.19,
+    polyYesAsk: 0.191,
+    kalshiYesBid: 0.24,
+    kalshiYesAsk: 0.25,
+  });
+  assert.equal(exactArb.crossVerdict, "EXECUTABLE_NET_ARB");
+  assert.ok(exactArb.netArbBps > 300);
+
+  const blockedBasis = computeCrossVenuePair({
+    pairId: "millennium-prize-next",
+    eventTitle: "Next Millennium Prize",
+    outcomeLabel: "Riemann Hypothesis",
+    domain: { id: "ai", label: "AI & Tech" },
+    ruleAlignment: "BASIS_MISMATCH",
+    kalshiTicker: "KXMILLENNIUMNEXT-45-RH",
+    kalshiEventTicker: "KXMILLENNIUMNEXT-45",
+    polymarketSlug: "which-millennium-prize-problem-will-ai-solve-next",
+    polyYesBid: 0.77,
+    polyYesAsk: 0.771,
+    kalshiYesBid: 0.94,
+    kalshiYesAsk: 0.95,
+  });
+  assert.equal(blockedBasis.crossVerdict, "BASIS_TRAP_BLOCKED");
 });

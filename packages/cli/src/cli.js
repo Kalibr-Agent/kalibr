@@ -122,6 +122,23 @@ export async function runCli(argv, io = { log: console.log }) {
     return;
   }
 
+  if (cmd === "cross") {
+    const filter = String(flags.filter || "all");
+    const limit = Number(flags.limit || 14);
+    const pairs = await core.fetchCrossVenueRadar({ filter, limit });
+    if (flags.json) {
+      io.log(JSON.stringify(pairs, null, 2));
+      return;
+    }
+    io.log(`\nKALIBR KALSHI <-> POLYMARKET CROSS-VENUE DESK (${pairs.length} PAIRS)\n`);
+    for (const p of pairs) {
+      io.log(
+        `[${p.crossVerdict.padEnd(20)}] Poly ${(p.polyYesAsk * 100).toFixed(1).padStart(5)}¢ vs Kalshi ${(p.kalshiYesBid * 100).toFixed(1).padStart(5)}¢ | net ${(p.netArbBps / 100).toFixed(2)}% | ${p.outcomeLabel} (${p.eventTitle.slice(0, 34)})`
+      );
+    }
+    return;
+  }
+
   if (cmd === "verify") {
     const registry = String(flags.registry || "");
     const epoch = Number(positional[1] || flags.epoch || 0);
@@ -158,11 +175,12 @@ export async function runCli(argv, io = { log: console.log }) {
     return;
   }
 
-  io.log(`KALIBR v0.2.0 — Autonomous AI Probability Calibration & Polymarket Edge CLI
+  io.log(`KALIBR v0.3.0 — Autonomous AI Probability Calibration & Cross-Venue Edge CLI
 
 Commands:
   kalibr scan "<url-or-question>" [--bankroll 1000] [--json]
   kalibr radar [--domain all|macro|ai|geopolitics|crypto|policy] [--limit 10]
+  kalibr cross [--filter all|arb|basis|routing] [--limit 14]
   kalibr arb [--mode all|closed|open] [--limit 12]
   kalibr traps [--domain all|macro|ai|geopolitics|crypto|policy] [--limit 12]
   kalibr init [--dry-run]

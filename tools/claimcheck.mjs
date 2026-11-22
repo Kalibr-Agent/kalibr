@@ -33,6 +33,7 @@ if (!fs.existsSync(artifactPath)) {
 // 2. Multi-page HTML/JS hygiene: zero bare github.com, zero fake buyback promises, zero Connect Wallet popups
 const htmlFiles = [
   "apps/site/index.html",
+  "apps/site/cross/index.html",
   "apps/site/arb/index.html",
   "apps/site/traps/index.html",
   "apps/site/kelly/index.html",
@@ -42,6 +43,7 @@ const htmlFiles = [
 const jsFiles = [
   "apps/site/app.js",
   "apps/site/spine.js",
+  "apps/site/cross.js",
   "apps/site/arb.js",
   "apps/site/traps.js",
   "apps/site/kelly.js",

@@ -32,19 +32,23 @@ test("Worker serves /v1/status, /mcp tools/list, seals live Polymarket epoch, an
   );
   assert.equal(mcpRes.status, 200);
   const mcpBody = await mcpRes.json();
-  assert.equal(mcpBody.result.tools.length, 8);
+  assert.equal(mcpBody.result.tools.length, 9);
 
-  // 2b. Check /v1/arb and /v1/traps live endpoints
-  const [arbRes, trapsRes] = await Promise.all([
+  // 2b. Check /v1/arb, /v1/traps, and /v1/cross live endpoints
+  const [arbRes, trapsRes, crossRes] = await Promise.all([
     worker.fetch(new Request("https://kalibr.app/v1/arb?limit=6"), env, { waitUntil() {} }),
     worker.fetch(new Request("https://kalibr.app/v1/traps?limit=6"), env, { waitUntil() {} }),
+    worker.fetch(new Request("https://kalibr.app/v1/cross?limit=6"), env, { waitUntil() {} }),
   ]);
   assert.equal(arbRes.status, 200);
   assert.equal(trapsRes.status, 200);
+  assert.equal(crossRes.status, 200);
   const arbBody = await arbRes.json();
   const trapsBody = await trapsRes.json();
+  const crossBody = await crossRes.json();
   assert.equal(arbBody.ok, true);
   assert.equal(trapsBody.ok, true);
+  assert.equal(crossBody.ok, true);
 
   // 3. Run live Polymarket hourly seal tick and verify cryptographic proof endpoint
   const sealRes = await runHourlySealTick(env, { force: true });

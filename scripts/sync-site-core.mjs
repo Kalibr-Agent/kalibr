@@ -8,7 +8,7 @@ const CORE_SRC = path.resolve(HERE, "../packages/core/src");
 const SITE_CORE = path.resolve(HERE, "../apps/site/core");
 
 fs.mkdirSync(SITE_CORE, { recursive: true });
-for (const file of ["keccak.js", "merkle.js", "polymarket.js", "rpc.js", "index.js"]) {
+for (const file of ["keccak.js", "merkle.js", "polymarket.js", "cross.js", "rpc.js", "index.js"]) {
   fs.copyFileSync(path.join(CORE_SRC, file), path.join(SITE_CORE, file));
 }
 console.log("[kalibr] Synced @kalibr/core modules to apps/site/core/");

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalshi ↔ Polymarket Cross-Venue Spread &amp; Basis Guard — KALIBR</title>
+  <meta name="description" content="Live cross-venue prediction market scanner comparing Kalshi CFTC orderbooks against Polymarket CLOB net of quadratic Kalshi taker fees, with deterministic Rule-Mismatch Guard." />
+  <meta property="og:title" content="KALIBR /cross — Live Kalshi ↔ Polymarket Spread &amp; Basis Desk" />
+  <meta property="og:description" content="Spot executable cross-book arbitrage net of Kalshi 0.07·P·(1-P) taker fees — and block basis traps before sizing." />
+  <meta property="og:image" content="https://kalibragent.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kalibragent.com/og-image.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <div class="atelier-frame">
+    <aside class="calibration-spine" aria-label="KALIBR Instrument Spine">
+      <div class="spine-brand">
+        <a href="/" class="brand-lockup">
+          <img src="/logo.png" alt="KALIBR Emblem" class="brand-mark" width="42" height="42" />
+          <div class="brand-copy">
+            <span class="brand-word">KALIBR</span>
+            <span class="brand-sub">PROBABILITY ATELIER</span>
+          </div>
+        </a>
+        <p class="spine-motto">Crowd prices emotion. Calibration prices probability.</p>
+      </div>
+
+      <nav class="folio-nav" aria-label="Primary Folios">
+        <a href="/" class="folio-btn">
+          <span class="folio-idx">01</span>
+          <span class="folio-meta">
+            <strong>Mispricing Board</strong>
+            <small>Live Polymarket Edge &amp; Bench</small>
+          </span>
+        </a>
+        <a href="/cross" class="folio-btn is-active">
+          <span class="folio-idx">02</span>
+          <span class="folio-meta">
+            <strong>Kalshi ↔ Polymarket <span class="folio-new-tag">v0.3</span></strong>
+            <small>Cross-Venue Arb &amp; Basis Guard</small>
+          </span>
+        </a>
+        <a href="/arb" class="folio-btn">
+          <span class="folio-idx">03</span>
+          <span class="folio-meta">
+            <strong>NegRisk &amp; Sum-of-Odds</strong>
+            <small>Dutch Books &amp; Overround</small>
+          </span>
+        </a>
+        <a href="/traps" class="folio-btn">
+          <span class="folio-idx">04</span>
+          <span class="folio-meta">
+            <strong>Resolution Trap Radar</strong>
+            <small>Fine-Print &amp; UMA Audit</small>
+          </span>
+        </a>
+        <a href="/kelly" class="folio-btn">
+          <span class="folio-idx">05</span>
+          <span class="folio-meta">
+            <strong>Kelly Slate Builder</strong>
+            <small>Multi-Leg Correlation Sizer</small>
+          </span>
+        </a>
+        <a href="/seals" class="folio-btn">
+          <span class="folio-idx">06</span>
+          <span class="folio-meta">
+            <strong>Sealed Track Record</strong>
+            <small>Onchain Merkle Verifier</small>
+          </span>
+        </a>
+        <a href="/agents" class="folio-btn">
+          <span class="folio-idx">07</span>
+          <span class="folio-meta">
+            <strong>CLI, MCP &amp; $KALIBR</strong>
+            <small>Agent Tools &amp; Holder Tiers</small>
+          </span>
+        </a>
+      </nav>
+
+      <div class="spine-telemetry">
+        <div class="telemetry-header">
+          <span class="pulse-dot" id="chainPulseDot"></span>
+          <span id="chainPulseText">ONCHAIN TELEMETRY · LIVE</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tel-cell">
+            <span class="tel-val" id="statMispriced">—</span>
+            <span class="tel-lbl">LIVE EDGES</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statSealedForecasts">—</span>
+            <span class="tel-lbl">SEALED ODDS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statEpochs">—</span>
+            <span class="tel-lbl">EPOCHS</span>
+          </div>
+          <div class="tel-cell">
+            <span class="tel-val" id="statHeadBlock">—</span>
+            <span class="tel-lbl">HEAD BLOCK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spine-pass">
+        <div class="pass-top">
+          <span class="pass-kicker">0-WALLET ACCESS</span>
+          <span class="pass-badge" id="callerTierBadge">VISITOR</span>
+        </div>
+        <p class="pass-note">Zero signatures or approvals. Paste any public 0x address to check $KALIBR tier.</p>
+        <form id="walletCheckForm" class="pass-form">
+          <input type="text" id="walletInput" placeholder="0x… public address" autocomplete="off" spellcheck="false" />
+          <button type="submit">Verify</button>
+        </form>
+        <div class="pass-status" id="walletStatusLine">Unlimited &lt;1.2s scans · 15 AI panels/day</div>
+      </div>
+
+      <div class="spine-footer">
+        <button type="button" class="ca-plate" id="copyCaBtn" title="Click to copy $KALIBR contract address">
+          <span class="ca-plate-lbl">$KALIBR CONTRACT</span>
+          <code id="caDisplay">$KALIBR: 0x002E44f3c1856a71acAF9FB3067e96a4348607c4</code>
+        </button>
+        <div class="spine-links">
+          <a href="https://x.com/kalibragent" target="_blank" rel="noopener">X / TWITTER ↗</a>
+          <a href="https://github.com/Kalibr-Agent/kalibr" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a href="/SKILL.md" target="_blank" rel="noopener">SKILL.MD ↗</a>
+          <a href="/llms.txt" target="_blank" rel="noopener">LLMS.TXT ↗</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="atelier-main">
+      <section class="folio-view is-visible">
+        <div class="board-masthead">
+          <div>
+            <div class="section-eyebrow">FOLIO 02 · KALSHI CFTC ↔ POLYMARKET CLOB SPREAD &amp; BASIS DESK</div>
+            <h1 class="editorial-h1">Executable cross-venue spreads — net of fees &amp; guarded against basis traps.</h1>
+          </div>
+          <div class="vernier-legend">
+            <span><i class="leg-crowd"></i> Polymarket CLOB (0¢ fee)</span>
+            <span><i class="leg-fair"></i> Kalshi CFTC (0.07·P·(1-P) fee)</span>
+          </div>
+        </div>
+
+        <div class="kpi-ribbon">
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">MATCHED TWIN LEGS</span>
+            <span class="kpi-tile-val" id="kpiCrossTotal">—</span>
+            <span class="kpi-tile-sub">Live Kalshi v2 ↔ Polymarket</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">NET-OF-FEE LOCKED ARBS</span>
+            <span class="kpi-tile-val pos" id="kpiCrossNetArb">—</span>
+            <span class="kpi-tile-sub">YES + opposing NO &lt; $1.00 after fees</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">BASIS TRAPS BLOCKED</span>
+            <span class="kpi-tile-val neg" id="kpiCrossBasis">—</span>
+            <span class="kpi-tile-sub">Rule-Mismatch Guard triggered</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="kpi-tile-lbl">BEST NET LOCKED EDGE</span>
+            <span class="kpi-tile-val pos" id="kpiCrossBestEdge">—</span>
+            <span class="kpi-tile-sub">After quadratic Kalshi taker fee</span>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="domain-pills" id="crossFilterRow">
+            <button type="button" class="dom-pill is-active" data-filter="all">All Twin Orderbooks</button>
+            <button type="button" class="dom-pill" data-filter="arb">Executable Cross-Book Arbs</button>
+            <button type="button" class="dom-pill" data-filter="basis">Blocked Basis Traps</button>
+            <button type="button" class="dom-pill" data-filter="routing">Best-Venue Price Routing</button>
+          </div>
+          <div class="sort-controls">
+            <span class="omnibar-latency" id="crossLatency">—</span>
+            <button type="button" class="btn-ghost" id="refreshCrossBtn">↻ Refresh Both Venues</button>
+          </div>
+        </div>
+
+        <div class="workbench-split">
+          <div class="market-cards-col" id="crossCardsList" aria-live="polite">
+            <div class="skeleton-card">Querying live Kalshi Trade API v2 &amp; Polymarket Gamma orderbooks…</div>
+          </div>
+
+          <aside class="pinned-inspector" id="crossInspector" aria-label="Cross-Venue Execution &amp; Rule Comparison">
+            <div class="inspector-empty">Select any twin contract to simulate net-of-fee cross-venue execution &amp; compare settlement rules.</div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/cross.js"></script>
+</body>
+</html>

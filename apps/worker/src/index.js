@@ -8,6 +8,7 @@ import {
   computeBrierScore,
   GAMMA_API_BASE,
 } from "../../../packages/core/src/polymarket.js";
+import { fetchCrossVenueRadar } from "../../../packages/core/src/cross.js";
 import {
   buildMerkleTree,
   verifyMerkleProof,
@@ -339,6 +340,35 @@ async function getTrapRadarWithCache(env, { domain = "all", limit = 24, forceRef
   return enriched.slice(0, limit);
 }
 
+async function getCrossVenueWithCache(env, { filter = "all", limit = 28, forceRefresh = false } = {}) {
+  const cacheKey = `cross:${filter}`;
+  const nowSec = Math.floor(Date.now() / 1000);
+  if (!forceRefresh && env.DB) {
+    const cached = await env.DB.prepare("SELECT payload_json, updated_at FROM radar_cache WHERE cache_key = ?")
+      .bind(cacheKey)
+      .first();
+    if (cached && nowSec - Number(cached.updated_at) <= 45) {
+      try {
+        const parsed = JSON.parse(cached.payload_json);
+        if (Array.isArray(parsed)) return parsed.slice(0, limit);
+      } catch {
+        // Re-fetch below
+      }
+    }
+  }
+  const pairs = await fetchCrossVenueRadar({ limit: Math.max(limit, 28), filter });
+  if (env.DB && pairs.length > 0) {
+    await env.DB.prepare(
+      `INSERT INTO radar_cache (cache_key, payload_json, updated_at)
+       VALUES (?, ?, ?)
+       ON CONFLICT(cache_key) DO UPDATE SET payload_json = excluded.payload_json, updated_at = excluded.updated_at`
+    )
+      .bind(cacheKey, JSON.stringify(pairs), nowSec)
+      .run();
+  }
+  return pairs.slice(0, limit);
+}
+
 async function refreshResolvedOutcomes(env) {
   if (!env.DB) return 0;
   const { results } = await env.DB.prepare(
@@ -620,6 +650,18 @@ const MCP_TOOLS = [
       },
     },
   },
+  {
+    name: "scan_cross_venue_spreads",
+    description:
+      "Compare live Kalshi CFTC orderbooks against Polymarket CLOB across matched Macro, US Policy, and AI contracts. Computes executable complete-set arbitrage net of Kalshi quadratic taker fees (0.07*P*(1-P)) and enforces a deterministic Rule-Mismatch Guard.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filter: { type: "string", enum: ["all", "arb", "basis", "routing"], description: "Optional signal filter" },
+        limit: { type: "number", description: "Max matched pairs to return (1-28)" },
+      },
+    },
+  },
 ];
 
 async function handleMcpRequest(req, env) {
@@ -733,6 +775,9 @@ async function handleMcpRequest(req, env) {
       } else if (toolName === "scan_resolution_traps") {
         const limit = Math.min(25, Math.max(1, Number(args.limit || 14)));
         out = { contracts: await getTrapRadarWithCache(env, { domain: args.domain || "all", limit }) };
+      } else if (toolName === "scan_cross_venue_spreads") {
+        const limit = Math.min(28, Math.max(1, Number(args.limit || 18)));
+        out = { pairs: await getCrossVenueWithCache(env, { filter: args.filter || "all", limit }) };
       } else {
         return json({ jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown tool: ${toolName}` } }, 404);
       }
@@ -789,6 +834,7 @@ npx github:Kalibr-Agent/kalibr init
 - \`scan_polymarket_edge({ query })\` — <1.2s actuarial edge, Quarter-Kelly stake, multi-bracket coherence & fine-print rule traps.
 - \`list_mispriced_radar({ domain?, limit? })\` — live non-sports world events ranked by crowd vs fair-value divergence.
 - \`list_negrisk_arb({ mode?, limit? })\` — multi-outcome NegRisk sum-of-odds parity scanner (Dutch-book ask baskets, Mint-set bid arbs, overround vigorish & unlisted field odds).
+- \`scan_cross_venue_spreads({ filter?, limit? })\` — live Kalshi CFTC ↔ Polymarket CLOB spread & net-of-fee arbitrage scanner with Rule-Mismatch Guard.
 - \`scan_resolution_traps({ domain?, limit? })\` — live fine-print & UMA oracle dispute trap radar across high-volume Polymarket contracts.
 - \`run_ai_3agent_calibration({ query, wallet? })\` — 3-agent LLM calibration (Base-Rate Analyst, Resolution Trap Devil, Chief Superforecaster) with verbatim JSON verification.
 - \`list_sealed_epochs({ limit? })\` / \`verify_forecast_seal({ epochHour, marketId })\` — verify pre-resolution Keccak-256 Merkle seals on Robinhood Chain (4663).
@@ -816,7 +862,7 @@ export default {
       if (pathname === "/llms.txt") {
         const siteUrl = (env.SITE_URL || "https://kalibragent.com").replace(/\/+$/, "");
         return textResp(
-          `# KALIBR\n> Autonomous AI probability calibration & Polymarket mispricing atelier.\n\n- Mispricing Board: ${siteUrl}/\n- NegRisk & Sum-of-Odds Scanner: ${siteUrl}/arb\n- Resolution Trap Radar: ${siteUrl}/traps\n- Multi-Leg Kelly Slate Builder: ${siteUrl}/kelly\n- Onchain Merkle Seals: ${siteUrl}/seals\n- Agent CLI, MCP & $KALIBR Tiers: ${siteUrl}/agents\n- GitHub Repository: https://github.com/Kalibr-Agent/kalibr\n- Streamable HTTP MCP: ${siteUrl}/mcp\n- Agent Skill: ${siteUrl}/SKILL.md\n- API Status: ${siteUrl}/v1/status\n- Live Mispricing Radar: ${siteUrl}/v1/radar\n- Live NegRisk Arb Radar: ${siteUrl}/v1/arb\n- Live Resolution Trap Radar: ${siteUrl}/v1/traps\n- Sealed Epochs: ${siteUrl}/v1/seals\n`
+          `# KALIBR\n> Autonomous AI probability calibration & cross-venue prediction market atelier.\n\n- Mispricing Board: ${siteUrl}/\n- NegRisk & Sum-of-Odds Scanner: ${siteUrl}/arb\n- Kalshi <-> Polymarket Spread Scanner: ${siteUrl}/cross\n- Resolution Trap Radar: ${siteUrl}/traps\n- Multi-Leg Kelly Slate Builder: ${siteUrl}/kelly\n- Onchain Merkle Seals: ${siteUrl}/seals\n- Agent CLI, MCP & $KALIBR Tiers: ${siteUrl}/agents\n- GitHub Repository: https://github.com/Kalibr-Agent/kalibr\n- Streamable HTTP MCP: ${siteUrl}/mcp\n- Agent Skill: ${siteUrl}/SKILL.md\n- API Status: ${siteUrl}/v1/status\n- Live Mispricing Radar: ${siteUrl}/v1/radar\n- Live Cross-Venue Radar: ${siteUrl}/v1/cross\n- Live NegRisk Arb Radar: ${siteUrl}/v1/arb\n- Live Resolution Trap Radar: ${siteUrl}/v1/traps\n- Sealed Epochs: ${siteUrl}/v1/seals\n`
         );
       }
 
@@ -928,6 +974,21 @@ export default {
           highRiskCount: contracts.filter((c) => c.trapVerdict === "HIGH_DISPUTE_RISK").length,
           flaggedCount: contracts.filter((c) => (c.ruleTraps || []).length > 0).length,
           contracts,
+        });
+      }
+
+      if (pathname === "/v1/cross" && req.method === "GET") {
+        const filter = url.searchParams.get("filter") || "all";
+        const limit = Math.min(35, Math.max(1, Number(url.searchParams.get("limit") || 24)));
+        const forceRefresh = url.searchParams.get("refresh") === "1";
+        const pairs = await getCrossVenueWithCache(env, { filter, limit, forceRefresh });
+        return json({
+          ok: true,
+          filter,
+          count: pairs.length,
+          netArbCount: pairs.filter((p) => p.crossVerdict === "EXECUTABLE_NET_ARB").length,
+          basisTrapCount: pairs.filter((p) => p.crossVerdict === "BASIS_TRAP_BLOCKED").length,
+          pairs,
         });
       }
 
