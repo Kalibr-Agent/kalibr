@@ -2,7 +2,7 @@ import { computeKellySizing } from "./core/polymarket.js";
 import { hashForecastLeaf, hashSortedPair } from "./core/merkle.js";
 
 const CONFIG = {
-  tokenCa: "",
+  tokenCa: "0x002E44f3c1856a71acAF9FB3067e96a4348607c4",
   sealRegistry: "0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2",
   xUrl: "https://x.com/kalibragent",
 };
