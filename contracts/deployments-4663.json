@@ -5,9 +5,11 @@
   "explorer": "https://robinhoodchain.blockscout.com",
   "contracts": {
     "ForecastSealRegistry": {
-      "address": null,
-      "compiler": "0.8.24",
-      "sourcify": "exact_match"
+      "address": "0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2",
+      "deployTx": "0x80714ee6c993da8bb7acce9d9b5184b38b4011d6df2319a6d1177c7056158aeb",
+      "compiler": "0.8.24+commit.e11b9ed9",
+      "sourcify": "exact_match",
+      "sourcifyUrl": "https://repo.sourcify.dev/4663/0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2"
     }
   },
   "token": {

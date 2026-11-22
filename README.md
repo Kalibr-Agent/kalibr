@@ -23,7 +23,7 @@ npx github:Kalibr-Agent/kalibr init
 
 - **`packages/core` (`@kalibr/core`)** — Pure zero-dependency Polymarket Gamma/CLOB ingestion, multi-bracket sibling sum coherence, actuarial favorite-longshot & lockup-yield de-biasing, fine-print resolution rule-trap scanner, Quarter-Kelly sizer, verbatim upstream JSON figure verifier, Brier Score engine, and sorted-pair Ethereum Keccak-256 Merkle trees.
 - **`packages/cli` (`kalibr`)** — Standalone CLI (`scan`, `radar`, `verify`, `init`, `doctor`, `mcp`) with `_npx` transient PATH protection and `.kalibr-bak` config backups.
-- **`contracts/src/ForecastSealRegistry.sol`** — Non-custodial Solidity `0.8.24` pre-resolution Merkle commitment contract compiled for Sourcify `exact_match` on Robinhood Chain (`4663`). Zero `payable`, zero `approve`, zero `transferFrom`.
+- **`contracts/src/ForecastSealRegistry.sol`** — Non-custodial Solidity `0.8.24` pre-resolution Merkle commitment contract deployed at `0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2` and verified `exact_match` on [Sourcify v2](https://repo.sourcify.dev/4663/0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2) (Robinhood Chain `4663`). Zero `payable`, zero `approve`, zero `transferFrom`.
 - **`apps/worker` & `apps/site`** — Cloudflare Worker + D1 + hourly sealer cron + real 3-agent OpenAI/Anthropic calibration panel + Streamable HTTP `/mcp` + Swiss Probability Atelier UI (`0-wallet`).
 
 ## Claim & Status Matrix

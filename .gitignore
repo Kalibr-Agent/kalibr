@@ -7,6 +7,9 @@ node_modules/
 .DS_Store
 packages/cli/src/_vendor/
 launch.json
+launch-receipt.json
+cadence.json
+.stop-burn
 brand/candidates/
 brand/small48.png
 brand/warmup-*.png

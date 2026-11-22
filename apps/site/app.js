@@ -3,7 +3,7 @@ import { hashForecastLeaf, hashSortedPair } from "./core/merkle.js";
 
 const CONFIG = {
   tokenCa: "",
-  sealRegistry: "",
+  sealRegistry: "0xcbbc1f359ff98ec0c6a5d7ee02380f957b650bc2",
   xUrl: "https://x.com/kalibragent",
 };
 
